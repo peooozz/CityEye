@@ -17,7 +17,7 @@ export const cameras: Camera[] = [
     location: { lat: 21.1458, lng: 79.0882 },
     status: "online",
     fps: 25,
-    videoSrc: "/videos/cctv_feed_2.mp4",
+    videoSrc: "/videos/cctv_hero.mp4",
     junctionType: "High-Density Commercial & Metro Interchange",
   },
   {
@@ -26,7 +26,7 @@ export const cameras: Camera[] = [
     location: { lat: 21.1432, lng: 79.0652 },
     status: "online",
     fps: 30,
-    videoSrc: "/videos/cctv_feed_3.mp4",
+    videoSrc: "/videos/cctv_feed_1.mp4",
     junctionType: "Rotary Intersection & Market Boulevard",
   },
   {
@@ -35,7 +35,7 @@ export const cameras: Camera[] = [
     location: { lat: 21.1349, lng: 79.0498 },
     status: "online",
     fps: 28,
-    videoSrc: "/videos/cctv_feed_4.mp4",
+    videoSrc: "/videos/cctv_hero.mp4",
     junctionType: "Boulevard & Waterfront Expressway",
   },
 ];
