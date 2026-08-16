@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NexWatch — AI Video Analytics for Smart Cities",
+  title: "City Eye — AI Video Analytics for Nagpur's CCTV Network",
   description:
-    "AI-powered video analytics that turns your city's existing CCTV network into a real-time alert system — detecting incidents in seconds.",
+    "Real-time AI video analytics that turns Nagpur's CCTV network into an instant incident detection and alert system with ironclad security.",
 };
 
 export default function RootLayout({
@@ -14,6 +14,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://db.onlinewebfonts.com/c/04e6981992c0e2e7642af2074ebe3901?family=Helvetica+Now+Display+Bold"
+          rel="stylesheet"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

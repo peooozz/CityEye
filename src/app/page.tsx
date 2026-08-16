@@ -1,226 +1,314 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Star } from "lucide-react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import {
+  ArrowRightCircle,
+  Zap,
+  LockKeyhole,
+  Fingerprint,
+  Menu,
+  X,
+} from "lucide-react";
 import { Logo } from "@/components/logo";
 
 /* ═══════════════════════════════════════════════════════════════════════
-   PART A — PUBLIC LANDING PAGE
+   ANIMATION VARIANTS
    ═══════════════════════════════════════════════════════════════════════ */
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15,
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
 
-// ── Navbar ────────────────────────────────────────────────────────────
-function Navbar() {
+const navItems = [
+  { name: "Live Feeds", href: "/dashboard" },
+  { name: "Incidents", href: "/dashboard" },
+  { name: "Analytics", href: "/dashboard/analytics" },
+  { name: "Junctions", href: "/dashboard/admin" },
+  { name: "Help", href: "/dashboard" },
+];
+
+export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <nav className="sticky top-[30px] z-50 flex justify-center px-4">
-      <div className="glass-navbar flex items-center gap-6 px-6 py-3 w-fit">
-        <Logo size="sm" variant="light" />
+    <div className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between selection:bg-[#7342E2] selection:text-white">
+      {/* ══ Background Video ════════════════════════════════════════════ */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none"
+      >
+        <source
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
+          type="video/mp4"
+        />
+      </video>
 
-        <div className="hidden md:flex items-center gap-5">
-          {["Home", "Features", "Solutions", "Pricing"].map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+      {/* ══ Navbar ══════════════════════════════════════════════════════ */}
+      <header className="relative z-10 w-full max-w-[1280px] mx-auto px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
+        {/* Left: Logo */}
+        <Link href="/" className="transition-opacity hover:opacity-90">
+          <Logo size="md" variant="light" />
+        </Link>
+
+        {/* Center: Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="text-sm font-medium text-[var(--color-text)] transition-opacity hover:opacity-70"
             >
-              {link}
-            </a>
+              {item.name}
+            </Link>
           ))}
+        </nav>
+
+        {/* Right: Desktop Action Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          <Link href="/dashboard">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-sm font-semibold px-5 py-2.5 rounded-full text-white bg-[#7342E2] shadow-md hover:shadow-lg transition-all cursor-pointer"
+            >
+              Start For Free
+            </motion.button>
+          </Link>
+
+          <Link href="/dashboard">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-sm font-semibold px-5 py-2.5 rounded-full text-[var(--color-text)] bg-[#F2F2EE] hover:bg-[#EAEAE6] transition-all cursor-pointer"
+            >
+              Sign In
+            </motion.button>
+          </Link>
         </div>
 
-        <button className="glass-button px-5 py-2 text-sm font-medium text-gray-800 flex items-center gap-2 hover:bg-white/50 transition-all cursor-pointer">
-          Request Demo
-          <ArrowRight size={14} />
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="md:hidden p-2 rounded-lg text-[var(--color-text)] hover:bg-black/5 transition-colors cursor-pointer"
+          aria-label="Open menu"
+        >
+          <Menu size={24} />
         </button>
-      </div>
-    </nav>
-  );
-}
+      </header>
 
-// ── Social Proof Badge ───────────────────────────────────────────────
-function SocialProofBadge() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15, duration: 0.5 }}
-      className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 mb-6"
-    >
-      <div className="flex">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} size={14} fill="#FF801E" stroke="#FF801E" />
-        ))}
-      </div>
-      <span className="text-sm text-gray-600">
-        Deployed across 50+ city cameras · 99.2% uptime
-      </span>
-    </motion.div>
-  );
-}
+      {/* ══ Mobile Menu (Slide-in Sheet) ════════════════════════════════ */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 bg-[rgba(25,40,55,0.35)] backdrop-blur-[4px]"
+            />
 
-// ── Hero Section ─────────────────────────────────────────────────────
-function Hero() {
-  return (
-    <section id="home" className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24">
-      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-0">
-        {/* LEFT COLUMN — Content */}
-        <div className="flex-1 max-w-2xl z-10">
-          <SocialProofBadge />
+            {/* Sheet */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="fixed right-0 top-0 z-50 h-[100dvh] flex flex-col justify-between py-6 px-6"
+              style={{
+                width: "min(88vw, 360px)",
+                backgroundColor: "#CFC8C5",
+                boxShadow: "-12px 0 48px rgba(25,40,55,0.18)",
+              }}
+            >
+              <div>
+                {/* Header */}
+                <div className="flex items-center justify-between pb-5">
+                  <Logo size="sm" variant="light" />
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-10 h-10 rounded-full flex items-center justify-center bg-[rgba(25,40,55,0.1)] text-[var(--color-text)] hover:bg-[rgba(25,40,55,0.15)] transition-colors cursor-pointer"
+                    aria-label="Close menu"
+                  >
+                    <X size={20} />
+                  </motion.button>
+                </div>
 
+                {/* Divider */}
+                <div
+                  className="h-px w-full my-4"
+                  style={{ backgroundColor: "rgba(25,40,55,0.12)" }}
+                />
+
+                {/* Nav Links */}
+                <nav className="flex flex-col gap-2 pt-2">
+                  {navItems.map((item, i) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ x: 24, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{
+                        delay: 0.18 + i * 0.07,
+                        duration: 0.4,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block px-4 py-3 rounded-xl text-[1.1rem] font-medium text-[var(--color-text)] hover:bg-black/10 transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Bottom CTAs */}
+              <div className="flex flex-col gap-3 pt-6">
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full"
+                >
+                  <button className="w-full py-3.5 rounded-full text-[0.95rem] font-semibold text-white bg-[#7342E2] shadow-md hover:bg-[#6434d3] transition-all cursor-pointer">
+                    Start For Free
+                  </button>
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full"
+                >
+                  <button className="w-full py-3.5 rounded-full text-[0.95rem] font-semibold text-[var(--color-text)] bg-[#F2F2EE] hover:bg-[#EAEAE6] transition-all cursor-pointer">
+                    Sign In
+                  </button>
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ══ Hero Content ════════════════════════════════════════════════ */}
+      <main className="relative z-10 w-full max-w-[1280px] mx-auto px-5 sm:px-8 pt-[clamp(40px,8vw,72px)] pb-12 flex flex-col items-center justify-center flex-grow">
+        <div className="w-full max-w-[680px] mx-auto flex flex-col items-center text-center">
+          {/* Headline (h1) */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.6 }}
-            className="font-headline text-[40px] md:text-[56px] lg:text-[75px] leading-[1.05] tracking-[-2px] text-gray-950 mb-6"
+            custom={0}
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="font-heading text-[clamp(1.65rem,5vw,3rem)] leading-[1.05] tracking-[-0.01em] text-[var(--color-text)] mb-6"
           >
-            See more.{" "}
-            <br className="hidden md:block" />
-            Respond faster.
+            <span className="block whitespace-normal sm:whitespace-nowrap">
+              Lock{" "}
+              <Zap
+                size={24}
+                style={{
+                  color: "#192837",
+                  display: "inline",
+                  verticalAlign: "middle",
+                  position: "relative",
+                  top: "-2px",
+                  margin: "0 4px",
+                }}
+              />{" "}
+              Down Your{" "}
+              <LockKeyhole
+                size={24}
+                style={{
+                  color: "#192837",
+                  display: "inline",
+                  verticalAlign: "middle",
+                  position: "relative",
+                  top: "-2px",
+                  margin: "0 4px",
+                }}
+              />{" "}
+              Passwords
+            </span>
+            <span className="block mt-1 sm:mt-2">
+              with Ironclad Security{" "}
+              <Fingerprint
+                size={24}
+                style={{
+                  color: "#192837",
+                  display: "inline",
+                  verticalAlign: "middle",
+                  position: "relative",
+                  top: "-2px",
+                  marginLeft: "6px",
+                }}
+              />
+            </span>
           </motion.h1>
 
+          {/* Subtext */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-lg tracking-[-0.5px] text-gray-600 max-w-[480px] mb-8 leading-relaxed"
+            custom={1}
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="font-body text-[clamp(0.9rem,2.5vw,1.1rem)] text-[var(--color-text)] opacity-80 max-w-[560px] leading-[1.65] mb-8"
           >
-            AI-powered video analytics that turns Nagpur&apos;s existing CCTV
-            network into a real-time alert system — detecting incidents in
-            seconds and giving operators the tools to act before they escalate.
+            Zero stress, total control. Unbreakable storage, one-tap access, and
+            pro-grade tools for your non-stop world.
           </motion.p>
 
+          {/* CTA Button */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            custom={2}
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="w-full flex justify-center"
           >
             <Link href="/dashboard">
-              <button className="cta-primary px-8 py-4 text-white font-medium flex items-center gap-3 cursor-pointer">
-                View Live Dashboard
-                <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-                  <ArrowRight size={14} className="text-white" />
-                </span>
-              </button>
+              <motion.button
+                whileHover={{ scale: 1.04, filter: "brightness(1.1)" }}
+                whileTap={{ scale: 0.96 }}
+                style={{
+                  borderRadius: "50px",
+                  backgroundColor: "#7342E2",
+                  boxShadow: "0 4px 24px rgba(115,66,226,0.28)",
+                  minWidth: "210px",
+                  padding: "17px 24px",
+                }}
+                className="flex items-center justify-between gap-8 text-white font-semibold text-[clamp(0.9rem,2vw,1rem)] transition-all cursor-pointer"
+              >
+                <span>Get It Free</span>
+                <ArrowRightCircle size={20} className="text-white flex-shrink-0" />
+              </motion.button>
             </Link>
-
-            <a
-              href="#"
-              className="text-sm text-gray-500 hover:text-gray-700 hover:underline transition-all"
-            >
-              Read the deployment whitepaper
-            </a>
           </motion.div>
         </div>
+      </main>
 
-        {/* RIGHT COLUMN — Glassy Orb */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-          className="flex-1 flex justify-center lg:justify-end relative min-h-[350px] md:min-h-[480px] lg:min-h-[560px]"
-        >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full max-w-[700px] scale-125 mix-blend-screen"
-            style={{
-              filter:
-                "hue-rotate(-55deg) saturate(250%) brightness(1.2) contrast(1.1)",
-            }}
-          >
-            <source
-              src="https://future.co/images/homepage/glassy-orb/orb-purple.webm"
-              type="video/webm"
-            />
-          </video>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── Social Proof Logos ───────────────────────────────────────────────
-function LogoStrip() {
-  const logos = [
-    { name: "NagpurMC", shape: "M12 2L2 22h20L12 2z" },
-    { name: "SmartCity", shape: "M2 6h20v12H2z" },
-    { name: "TrafficAI", shape: "M12 2a10 10 0 100 20 10 10 0 000-20z" },
-    { name: "UrbanGrid", shape: "M2 2l10 10L22 2v20L12 12 2 22V2z" },
-    { name: "CivicTech", shape: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" },
-  ];
-
-  return (
-    <section className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-20 mt-8">
-      <p className="text-center text-xs uppercase tracking-[3px] text-gray-400 mb-10">
-        Trusted by city infrastructure &amp; smart-mobility partners
-      </p>
-      <div className="flex flex-wrap justify-center items-center gap-12 md:gap-[100px]">
-        {logos.map((logo) => (
-          <div
-            key={logo.name}
-            className="group cursor-pointer transition-all duration-200"
-          >
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="text-gray-400 opacity-50 grayscale group-hover:text-[#0084FF] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-200"
-            >
-              <path d={logo.shape} />
-            </svg>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ── Empty Sections (anchors for nav) ─────────────────────────────────
-function SectionAnchors() {
-  return (
-    <>
-      <section id="features" className="min-h-[1px]" />
-      <section id="solutions" className="min-h-[1px]" />
-      <section id="pricing" className="min-h-[1px]" />
-    </>
-  );
-}
-
-// ── Page Component ───────────────────────────────────────────────────
-export default function LandingPage() {
-  return (
-    <div className="relative min-h-screen bg-white overflow-hidden">
-      {/* Background glow layer */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full"
-          style={{
-            background: "rgba(96, 177, 255, 0.18)",
-            filter: "blur(120px)",
-          }}
-        />
-        <div
-          className="absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full"
-          style={{
-            background: "rgba(49, 154, 255, 0.22)",
-            filter: "blur(120px)",
-          }}
-        />
-      </div>
-
-      {/* Main content */}
-      <div className="relative z-10">
-        <Navbar />
-        <Hero />
-        <LogoStrip />
-        <SectionAnchors />
-      </div>
+      {/* ══ Bottom Anchor Space ═════════════════════════════════════════ */}
+      <footer className="relative z-10 w-full py-4 text-center text-xs text-[var(--color-text)] opacity-50">
+        City Eye AI Video Analytics &copy; {new Date().getFullYear()} · Nagpur Smart Mobility
+      </footer>
     </div>
   );
 }
