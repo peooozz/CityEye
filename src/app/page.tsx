@@ -31,10 +31,10 @@ const fadeUp: Variants = {
 
 const navItems = [
   { name: "Live Feeds", href: "/dashboard" },
-  { name: "Incidents", href: "/dashboard" },
+  { name: "Incident Alerts", href: "/dashboard" },
   { name: "Analytics", href: "/dashboard/analytics" },
   { name: "Junctions", href: "/dashboard/admin" },
-  { name: "Help", href: "/dashboard" },
+  { name: "System Health", href: "/dashboard/admin" },
 ];
 
 export default function LandingPage() {
@@ -84,7 +84,7 @@ export default function LandingPage() {
               whileTap={{ scale: 0.95 }}
               className="text-sm font-semibold px-5 py-2.5 rounded-full text-white bg-[#7342E2] shadow-md hover:shadow-lg transition-all cursor-pointer"
             >
-              Start For Free
+              Launch Prototype
             </motion.button>
           </Link>
 
@@ -94,7 +94,7 @@ export default function LandingPage() {
               whileTap={{ scale: 0.95 }}
               className="text-sm font-semibold px-5 py-2.5 rounded-full text-[var(--color-text)] bg-[#F2F2EE] hover:bg-[#EAEAE6] transition-all cursor-pointer"
             >
-              Sign In
+              Operator Console
             </motion.button>
           </Link>
         </div>
@@ -192,7 +192,7 @@ export default function LandingPage() {
                   className="w-full"
                 >
                   <button className="w-full py-3.5 rounded-full text-[0.95rem] font-semibold text-white bg-[#7342E2] shadow-md hover:bg-[#6434d3] transition-all cursor-pointer">
-                    Start For Free
+                    Launch Prototype
                   </button>
                 </Link>
                 <Link
@@ -201,7 +201,7 @@ export default function LandingPage() {
                   className="w-full"
                 >
                   <button className="w-full py-3.5 rounded-full text-[0.95rem] font-semibold text-[var(--color-text)] bg-[#F2F2EE] hover:bg-[#EAEAE6] transition-all cursor-pointer">
-                    Sign In
+                    Operator Console
                   </button>
                 </Link>
               </div>
@@ -212,17 +212,31 @@ export default function LandingPage() {
 
       {/* ══ Hero Content ════════════════════════════════════════════════ */}
       <main className="relative z-10 w-full max-w-[1280px] mx-auto px-5 sm:px-8 pt-[clamp(40px,8vw,72px)] pb-12 flex flex-col items-center justify-center flex-grow">
-        <div className="w-full max-w-[680px] mx-auto flex flex-col items-center text-center">
+        <div className="w-full max-w-[720px] mx-auto flex flex-col items-center text-center">
+          {/* Hackathon Prototype Badge */}
+          <motion.div
+            custom={0}
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(115,66,226,0.1)] border border-[rgba(115,66,226,0.2)] mb-5"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#7342E2] animate-pulse" />
+            <span className="text-xs font-semibold text-[#7342E2] tracking-wide uppercase">
+              AI Video Analytics Hackathon Prototype · Nagpur Smart City
+            </span>
+          </motion.div>
+
           {/* Headline (h1) */}
           <motion.h1
-            custom={0}
+            custom={0.5}
             initial="hidden"
             animate="visible"
             variants={fadeUp}
             className="font-heading text-[clamp(1.65rem,5vw,3rem)] leading-[1.05] tracking-[-0.01em] text-[var(--color-text)] mb-6"
           >
             <span className="block whitespace-normal sm:whitespace-nowrap">
-              Lock{" "}
+              Transform{" "}
               <Zap
                 size={24}
                 style={{
@@ -234,7 +248,7 @@ export default function LandingPage() {
                   margin: "0 4px",
                 }}
               />{" "}
-              Down Your{" "}
+              Every{" "}
               <LockKeyhole
                 size={24}
                 style={{
@@ -246,10 +260,10 @@ export default function LandingPage() {
                   margin: "0 4px",
                 }}
               />{" "}
-              Passwords
+              CCTV Camera
             </span>
             <span className="block mt-1 sm:mt-2">
-              with Ironclad Security{" "}
+              with Real-Time AI Vision{" "}
               <Fingerprint
                 size={24}
                 style={{
@@ -270,10 +284,11 @@ export default function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="font-body text-[clamp(0.9rem,2.5vw,1.1rem)] text-[var(--color-text)] opacity-80 max-w-[560px] leading-[1.65] mb-8"
+            className="font-body text-[clamp(0.9rem,2.5vw,1.1rem)] text-[var(--color-text)] opacity-85 max-w-[580px] leading-[1.65] mb-8"
           >
-            Zero stress, total control. Unbreakable storage, one-tap access, and
-            pro-grade tools for your non-stop world.
+            Zero blindspots, millisecond response. Autonomous anomaly detection,
+            live traffic &amp; crowd monitoring, and instant incident alerts across
+            Nagpur&apos;s municipal CCTV network.
           </motion.p>
 
           {/* CTA Button */}
@@ -292,12 +307,12 @@ export default function LandingPage() {
                   borderRadius: "50px",
                   backgroundColor: "#7342E2",
                   boxShadow: "0 4px 24px rgba(115,66,226,0.28)",
-                  minWidth: "210px",
-                  padding: "17px 24px",
+                  minWidth: "240px",
+                  padding: "17px 28px",
                 }}
                 className="flex items-center justify-between gap-8 text-white font-semibold text-[clamp(0.9rem,2vw,1rem)] transition-all cursor-pointer"
               >
-                <span>Get It Free</span>
+                <span>Launch Live Dashboard</span>
                 <ArrowRightCircle size={20} className="text-white flex-shrink-0" />
               </motion.button>
             </Link>
@@ -306,8 +321,8 @@ export default function LandingPage() {
       </main>
 
       {/* ══ Bottom Anchor Space ═════════════════════════════════════════ */}
-      <footer className="relative z-10 w-full py-4 text-center text-xs text-[var(--color-text)] opacity-50">
-        City Eye AI Video Analytics &copy; {new Date().getFullYear()} · Nagpur Smart Mobility
+      <footer className="relative z-10 w-full py-4 text-center text-xs text-[var(--color-text)] opacity-60">
+        City Eye — AI Video Analytics Prototype &copy; {new Date().getFullYear()} · Nagpur Smart CCTV Network
       </footer>
     </div>
   );
