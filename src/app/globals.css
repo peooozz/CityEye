@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Fustat:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* ══ Global Reset & Base ═══════════════════════════════════════════════ */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  margin: 0;
+}
+
+/* ══ Typography Utilities ═════════════════════════════════════════════ */
+.font-headline {
+  font-family: "Fustat", "Inter", sans-serif;
+  font-weight: 700;
+}
+
+.font-mono-data {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-weight: 400;
+}
+
+/* ══ Dashboard CSS Variables (scoped) ════════════════════════════════ */
+.dashboard-theme {
+  --bg-base: #0b0e14;
+  --bg-surface: #12151c;
+  --bg-surface-raised: #181c25;
+  --border-subtle: #232733;
+  --text-primary: #e6e8ec;
+  --text-secondary: #8b93a3;
+  --text-muted: #5a6172;
+  --accent-primary: #0084ff;
+  --accent-amber: #f5a623;
+  --accent-red: #ff4d4f;
+  --accent-green: #3dd68c;
+}
+
+/* ══ Dashboard Scanline Texture ══════════════════════════════════════ */
+.scanline-texture {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.015) 3px,
+      rgba(255, 255, 255, 0.015) 4px
+    );
+}
+
+/* ══ Landing Page Glass Effects ══════════════════════════════════════ */
+.glass-navbar {
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px 4px 4px 0px rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+}
+
+.glass-button {
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0px 4px 4px 0px rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+.cta-primary {
+  background: rgba(0, 132, 255, 0.8);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 16px;
+  box-shadow: inset 0px 4px 4px 0px rgba(255, 255, 255, 0.35);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.cta-primary:hover {
+  transform: scale(1.02);
+  box-shadow:
+    inset 0px 4px 4px 0px rgba(255, 255, 255, 0.35),
+    0 8px 32px rgba(0, 132, 255, 0.3);
+}
+
+/* ══ Live Pulse ══════════════════════════════════════════════════════ */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-live-pulse {
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+/* ══ Glow Ring for New Alerts ════════════════════════════════════════ */
+@keyframes glow-ring {
+  0% { box-shadow: 0 0 0 0 rgba(0, 132, 255, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(0, 132, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 132, 255, 0); }
+}
+
+.animate-glow-ring {
+  animation: glow-ring 1.5s ease-out;
+}
+
+/* ══ Scrollbar (dashboard) ═══════════════════════════════════════════ */
+.dashboard-theme ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dashboard-theme ::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+.dashboard-theme ::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+
+.dashboard-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
