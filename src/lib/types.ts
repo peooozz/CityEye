@@ -11,14 +11,7 @@ export type Camera = {
   junctionType?: string;
 };
 
-export type AlertEventType =
-  | "no_helmet"
-  | "wrong_side"
-  | "illegal_parking"
-  | "loitering"
-  | "wrong_way"
-  | "crowd_density"
-  | "speed_violation";
+export type AlertEventType = "no_helmet";
 
 export type AlertStatus =
   | "new"
@@ -32,6 +25,8 @@ export type Alert = {
   cameraName: string;
   eventType: AlertEventType;
   confidence: number;
+  vgg16Confidence: number;
+  yoloConfidence: number;
   trackId: string;
   detectedAt: string;
   deliveredAt: string;
@@ -41,10 +36,11 @@ export type Alert = {
   notes?: string;
   acknowledgedBy?: string;
   resolvedAt?: string;
-  vehicleType?: "Motorcycle" | "Car" | "Auto-Rickshaw" | "Truck" | "Pedestrian";
-  licensePlate?: string;
-  speedKmph?: number;
-  headingAngle?: number;
+  vehicleType: "Motorcycle" | "Scooter" | "Moped";
+  riderCount: number;
+  licensePlate: string;
+  fineAmountInr: number;
+  lawSection: string;
 };
 
 export type HourlyBreakdown = {
@@ -66,17 +62,18 @@ export type UserRole = "Operator" | "Admin";
 
 export interface MLTrackedObject {
   id: string;
-  type: "motorcycle_no_helmet" | "motorcycle_helmet" | "car_wrong_side" | "car_normal" | "auto_wrong_side" | "pedestrian";
+  type: "motorcycle_no_helmet" | "motorcycle_helmet" | "motorcycle_triple_no_helmet";
   x: number; // percentage (0-100)
   y: number;
   width: number;
   height: number;
-  confidence: number;
-  speedKmph: number;
-  headingAngle: number;
+  yoloConfidence: number;
+  vgg16Confidence: number;
   isViolation: boolean;
-  violationType?: "no_helmet" | "wrong_side" | "speed_violation";
+  violationType: "no_helmet";
   label: string;
-  licensePlate?: string;
-  trailPoints?: { x: number; y: number }[];
+  licensePlate: string;
+  riderCount: number;
+  headCropY?: number;
+  headCropHeight?: number;
 }

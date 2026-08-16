@@ -37,10 +37,10 @@ function DashboardNav() {
 
   const navLinks = [
     { href: "/feeds", label: "Live Feeds" },
-    { href: "/incidents", label: "Incident Alerts" },
-    { href: "/analytics", label: "Analytics" },
-    { href: "/junctions", label: "Junctions" },
-    { href: "/system-health", label: "System Health" },
+    { href: "/incidents", label: "Non-Helmet Triage" },
+    { href: "/analytics", label: "Compliance Analytics" },
+    { href: "/junctions", label: "Checkpoints" },
+    { href: "/system-health", label: "Model Telemetry" },
     ...(role === "Admin" ? [{ href: "/dashboard/admin", label: "Admin" }] : []),
   ];
 

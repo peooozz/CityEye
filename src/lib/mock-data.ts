@@ -1,6 +1,6 @@
 import { Camera, Alert, DailyStat, AlertEventType, AlertStatus } from "./types";
 
-// ── Cameras with Real CCTV Video Dataset Sources ─────────────────────
+// ── Cameras with Real CCTV Motorcycle Helmet Video Streams ───────────
 export const cameras: Camera[] = [
   {
     id: "CAM-001",
@@ -8,8 +8,8 @@ export const cameras: Camera[] = [
     location: { lat: 21.1256, lng: 79.0725 },
     status: "online",
     fps: 30,
-    videoSrc: "/videos/cctv_feed_1.mp4",
-    junctionType: "6-Lane Arterial Highway & Flyover",
+    videoSrc: "/videos/helmet_traffic_raw.mp4",
+    junctionType: "Arterial Highway Two-Wheeler Checkpoint",
   },
   {
     id: "CAM-002",
@@ -17,8 +17,8 @@ export const cameras: Camera[] = [
     location: { lat: 21.1458, lng: 79.0882 },
     status: "online",
     fps: 25,
-    videoSrc: "/videos/cctv_hero.mp4",
-    junctionType: "High-Density Commercial & Metro Interchange",
+    videoSrc: "/videos/helmet_traffic_raw.mp4",
+    junctionType: "Commercial Metro Plaza Two-Wheeler Lane",
   },
   {
     id: "CAM-003",
@@ -26,8 +26,8 @@ export const cameras: Camera[] = [
     location: { lat: 21.1432, lng: 79.0652 },
     status: "online",
     fps: 30,
-    videoSrc: "/videos/cctv_feed_1.mp4",
-    junctionType: "Rotary Intersection & Market Boulevard",
+    videoSrc: "/videos/helmet_detection_stream.mp4",
+    junctionType: "High-Density Traffic Intersection",
   },
   {
     id: "CAM-004",
@@ -35,13 +35,13 @@ export const cameras: Camera[] = [
     location: { lat: 21.1349, lng: 79.0498 },
     status: "online",
     fps: 28,
-    videoSrc: "/videos/cctv_hero.mp4",
-    junctionType: "Boulevard & Waterfront Expressway",
+    videoSrc: "/videos/helmet_traffic_raw.mp4",
+    junctionType: "Boulevard & Waterfront Checkpoint",
   },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────
-function randomItem<T>(arr: T[]): T {
+function randomItem<T>(arr: T[] | readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -55,31 +55,6 @@ function pad(n: number): string {
 
 let alertCounter = 100;
 
-const EVENT_TYPES: AlertEventType[] = [
-  "no_helmet",
-  "wrong_side",
-  "no_helmet",
-  "wrong_side",
-  "illegal_parking",
-  "speed_violation",
-  "loitering",
-  "crowd_density",
-];
-
-const EVENT_LABELS: Record<AlertEventType, string> = {
-  no_helmet: "No Helmet Detected (Two-Wheeler)",
-  wrong_side: "Wrong-Side Driving / Opposite Vector",
-  illegal_parking: "Illegal Parking & Dwell Violation",
-  loitering: "Restricted Zone Loitering",
-  wrong_way: "Wrong-Way Corridor Contradiction",
-  crowd_density: "Crowd Surge & Pedestrian Density",
-  speed_violation: "Speed Limit Violation (>60 km/h)",
-};
-
-export function getEventLabel(type: AlertEventType): string {
-  return EVENT_LABELS[type] || type;
-}
-
 const SAMPLE_PLATES = [
   "MH-31-BK-4091",
   "MH-31-EF-8821",
@@ -88,29 +63,22 @@ const SAMPLE_PLATES = [
   "MH-49-CC-3419",
   "MH-31-ZZ-7711",
   "MH-31-DX-5509",
+  "MH-31-HN-2388",
+  "MH-31-PZ-6120",
 ];
 
-// snapshot placeholder (colored SVG data URI per event type)
-const SNAPSHOT_COLORS: Record<AlertEventType, string> = {
-  no_helmet: "%23FF3B30",
-  wrong_side: "%23FF9500",
-  illegal_parking: "%23E53E3E",
-  loitering: "%23F5A623",
-  wrong_way: "%23FF9500",
-  crowd_density: "%233DD68C",
-  speed_violation: "%23AF52DE",
-};
+export function getEventLabel(type: AlertEventType = "no_helmet"): string {
+  return "Non-Helmet Violation (Two-Wheeler)";
+}
 
-function snapshotUrl(eventType: AlertEventType): string {
-  const c = SNAPSHOT_COLORS[eventType] || "%237342E2";
-  const label = eventType === "no_helmet" ? "NO HELMET DETECTED" : eventType === "wrong_side" ? "WRONG SIDE VECTOR" : "CCTV ALERT FRAME";
-  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180'><rect fill='%2310141E' width='320' height='180'/><rect x='30' y='25' width='120' height='75' rx='6' fill='none' stroke='${c}' stroke-width='2.5' stroke-dasharray='5'/><circle cx='90' cy='45' r='12' fill='none' stroke='${c}' stroke-width='2'/><text x='160' y='140' fill='${c}' font-size='10' font-family='monospace' font-weight='bold' text-anchor='middle'>${label}</text><text x='160' y='158' fill='white' font-size='9' font-family='monospace' text-anchor='middle'>AI INFERENCE: ACTIVE</text></svg>`;
+function snapshotUrl(riderCount = 1): string {
+  const subtitle = riderCount === 1 ? "1 RIDER WITHOUT HELMET" : riderCount === 2 ? "2 RIDERS WITHOUT HELMET" : "TRIPLE RIDING (NO HELMET)";
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180'><rect fill='%2310141E' width='320' height='180'/><rect x='45' y='25' width='100' height='75' rx='6' fill='none' stroke='%23FF3B30' stroke-width='2.5' stroke-dasharray='5'/><circle cx='95' cy='48' r='14' fill='rgba(255,59,48,0.2)' stroke='%23FF3B30' stroke-width='2'/><text x='160' y='136' fill='%23FF3B30' font-size='10.5' font-family='monospace' font-weight='bold' text-anchor='middle'>YOLOv8 + VGG16: ${subtitle}</text><text x='160' y='156' fill='white' font-size='9' font-family='monospace' text-anchor='middle'>SECTION 194D MV ACT</text></svg>`;
 }
 
 export function generateAlert(overrides?: Partial<Alert>): Alert {
   alertCounter++;
   const cam = randomItem(cameras);
-  const eventType = randomItem(EVENT_TYPES);
   const now = new Date();
   const detectedOffset = randomInt(0, 120);
   const detectedAt = new Date(now.getTime() - detectedOffset * 1000);
@@ -119,28 +87,31 @@ export function generateAlert(overrides?: Partial<Alert>): Alert {
     : randomInt(3000, 18000);
   const deliveredAt = new Date(detectedAt.getTime() + latencyMs);
 
-  const vehicleType: "Motorcycle" | "Car" | "Auto-Rickshaw" | "Truck" | "Pedestrian" = eventType === "no_helmet"
-    ? "Motorcycle"
-    : eventType === "wrong_side"
-    ? (randomItem(["Car", "Auto-Rickshaw", "Motorcycle"] as const))
-    : (randomItem(["Car", "Truck", "Auto-Rickshaw"] as const));
+  const riderCount = randomItem([1, 1, 1, 2, 2, 3] as const);
+  const vehicleType = randomItem(["Motorcycle", "Scooter", "Moped"] as const);
+  const fineAmountInr = riderCount * 1000;
+  const yoloConfidence = parseFloat((0.92 + Math.random() * 0.07).toFixed(2));
+  const vgg16Confidence = parseFloat((0.94 + Math.random() * 0.05).toFixed(2));
 
   return {
     id: `ALT-${alertCounter}`,
     cameraId: cam.id,
     cameraName: cam.name,
-    eventType,
-    confidence: parseFloat((0.85 + Math.random() * 0.14).toFixed(2)),
-    trackId: `TRK-${randomInt(100, 999)}`,
+    eventType: "no_helmet",
+    confidence: vgg16Confidence,
+    yoloConfidence,
+    vgg16Confidence,
+    trackId: `TRK-MOTO-${randomInt(100, 999)}`,
     detectedAt: detectedAt.toISOString(),
     deliveredAt: deliveredAt.toISOString(),
     latencyMs,
     status: "new",
-    snapshotUrl: snapshotUrl(eventType),
+    snapshotUrl: snapshotUrl(riderCount),
     vehicleType,
+    riderCount,
     licensePlate: randomItem(SAMPLE_PLATES),
-    speedKmph: eventType === "wrong_side" ? randomInt(28, 48) : randomInt(20, 65),
-    headingAngle: eventType === "wrong_side" ? randomInt(165, 195) : randomInt(0, 30),
+    fineAmountInr,
+    lawSection: `Motor Vehicles Act Section 194D (${riderCount} rider${riderCount > 1 ? "s" : ""} without protective headgear)`,
     ...overrides,
   };
 }
@@ -163,32 +134,33 @@ export function generateSeedAlerts(count = 25): Alert[] {
     const deliveredAt = new Date(detectedAt.getTime() + latencyMs);
     const status = randomItem(statuses);
     const cam = randomItem(cameras);
-    const eventType = randomItem(EVENT_TYPES);
-
-    const vehicleType: "Motorcycle" | "Car" | "Auto-Rickshaw" | "Truck" | "Pedestrian" = eventType === "no_helmet"
-      ? "Motorcycle"
-      : eventType === "wrong_side"
-      ? (randomItem(["Car", "Auto-Rickshaw", "Motorcycle"] as const))
-      : (randomItem(["Car", "Truck", "Auto-Rickshaw"] as const));
+    const riderCount = randomItem([1, 1, 1, 2, 2, 3] as const);
+    const vehicleType = randomItem(["Motorcycle", "Scooter", "Moped"] as const);
+    const fineAmountInr = riderCount * 1000;
+    const yoloConfidence = parseFloat((0.91 + Math.random() * 0.08).toFixed(2));
+    const vgg16Confidence = parseFloat((0.93 + Math.random() * 0.06).toFixed(2));
 
     alertCounter++;
     alerts.push({
       id: `ALT-${alertCounter}`,
       cameraId: cam.id,
       cameraName: cam.name,
-      eventType,
-      confidence: parseFloat((0.84 + Math.random() * 0.15).toFixed(2)),
-      trackId: `TRK-${randomInt(100, 999)}`,
+      eventType: "no_helmet",
+      confidence: vgg16Confidence,
+      yoloConfidence,
+      vgg16Confidence,
+      trackId: `TRK-MOTO-${randomInt(100, 999)}`,
       detectedAt: detectedAt.toISOString(),
       deliveredAt: deliveredAt.toISOString(),
       latencyMs,
       status,
-      snapshotUrl: snapshotUrl(eventType),
+      snapshotUrl: snapshotUrl(riderCount),
       vehicleType,
+      riderCount,
       licensePlate: randomItem(SAMPLE_PLATES),
-      speedKmph: eventType === "wrong_side" ? randomInt(28, 48) : randomInt(20, 65),
-      headingAngle: eventType === "wrong_side" ? randomInt(165, 195) : randomInt(0, 30),
-      acknowledgedBy: status !== "new" ? randomItem(["Officer S. Sharma", "Operator Deshmukh", "Admin Triage"]) : undefined,
+      fineAmountInr,
+      lawSection: `Motor Vehicles Act Section 194D (${riderCount} rider${riderCount > 1 ? "s" : ""} without protective headgear)`,
+      acknowledgedBy: status !== "new" ? randomItem(["Officer S. Sharma", "Operator Deshmukh", "Traffic In-Charge Patil"]) : undefined,
       resolvedAt: status === "resolved" ? new Date(deliveredAt.getTime() + randomInt(30000, 300000)).toISOString() : undefined,
     });
   }
@@ -212,7 +184,7 @@ export function generateDailyStats(): DailyStat[] {
       const hourly: { hour: number; count: number }[] = [];
       let total = 0;
       for (let h = 0; h < 24; h++) {
-        const count = h >= 6 && h <= 22 ? randomInt(1, 10) : randomInt(0, 3);
+        const count = h >= 7 && h <= 21 ? randomInt(2, 12) : randomInt(0, 3);
         hourly.push({ hour: h, count });
         total += count;
       }
@@ -221,9 +193,9 @@ export function generateDailyStats(): DailyStat[] {
         cameraId: cam.id,
         date: dateStr,
         totalAlerts: total,
-        avgLatencyMs: randomInt(4000, 16000),
-        falsePositiveRate: parseFloat((Math.random() * 0.12).toFixed(3)),
-        resolvedRate: parseFloat((0.82 + Math.random() * 0.16).toFixed(3)),
+        avgLatencyMs: randomInt(4000, 14000),
+        falsePositiveRate: parseFloat((Math.random() * 0.04).toFixed(3)),
+        resolvedRate: parseFloat((0.88 + Math.random() * 0.10).toFixed(3)),
         hourlyBreakdown: hourly,
       });
     }

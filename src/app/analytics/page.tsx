@@ -15,15 +15,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 import {
   ShieldAlert,
-  Navigation,
+  ShieldCheck,
   Activity,
-  Clock,
   Download,
   CheckCircle,
   Zap,
@@ -54,20 +50,20 @@ export default function AnalyticsPage() {
     );
   }, [dailyStats, selectedCamera]);
 
-  // Hourly traffic & violation density with No-Helmet and Wrong-Side breakdown
+  // Hourly traffic & non-helmet infraction density
   const hourlyData = useMemo(() => {
     const data = [];
     for (let h = 0; h < 24; h++) {
-      const isPeak = h >= 8 && h <= 20;
-      const noHelmet = isPeak ? Math.floor(Math.random() * 8 + 4) : Math.floor(Math.random() * 2 + 1);
-      const wrongSide = isPeak ? Math.floor(Math.random() * 5 + 2) : Math.floor(Math.random() * 2);
-      const parking = isPeak ? Math.floor(Math.random() * 4 + 1) : Math.floor(Math.random() * 2);
+      const isPeak = h >= 8 && h <= 21;
+      const singleRider = isPeak ? Math.floor(Math.random() * 8 + 4) : Math.floor(Math.random() * 2 + 1);
+      const doubleRider = isPeak ? Math.floor(Math.random() * 5 + 2) : Math.floor(Math.random() * 2);
+      const tripleRider = isPeak ? Math.floor(Math.random() * 3 + 1) : 0;
       data.push({
         hour: `${h.toString().padStart(2, "0")}:00`,
-        "No Helmet": noHelmet,
-        "Wrong Side": wrongSide,
-        "Illegal Parking": parking,
-        total: noHelmet + wrongSide + parking,
+        "Single Rider No-Helmet": singleRider,
+        "Double Rider No-Helmet": doubleRider,
+        "Triple Riding No-Helmet": tripleRider,
+        total: singleRider + doubleRider + tripleRider,
       });
     }
     return data;
@@ -86,13 +82,7 @@ export default function AnalyticsPage() {
     });
   }, [dailyStats]);
 
-  const pieData = [
-    { name: "No Helmet Violations", value: 58, color: "#FF3B30" },
-    { name: "Wrong-Side Driving", value: 26, color: "#FF9500" },
-    { name: "Illegal Parking", value: 16, color: "#7342E2" },
-  ];
-
-  const lineColors = ["#7342E2", "#0084FF", "#F5A623", "#10B981"];
+  const lineColors = ["#7342E2", "#FF3B30", "#F5A623", "#10B981"];
 
   return (
     <div className="relative min-h-screen w-full bg-[#FAF9F6] text-[#192837] overflow-x-hidden selection:bg-[#7342E2] selection:text-white font-body">
@@ -105,11 +95,11 @@ export default function AnalyticsPage() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-25"
         >
-          <source src="/videos/cctv_hero.mp4" type="video/mp4" />
+          <source src="/videos/helmet_traffic_raw.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-white/65 via-white/40 to-white/75" />
         <div className="absolute -top-40 left-1/3 w-[600px] h-[600px] rounded-full bg-[#7342E2]/10 blur-[130px]" />
-        <div className="absolute top-1/2 -right-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/10 blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[550px] h-[550px] rounded-full bg-[#FF3B30]/8 blur-[140px]" />
       </div>
 
       {/* ══ Cylinder Glassmorphism Navbar ══════════════════════════════ */}
@@ -123,14 +113,14 @@ export default function AnalyticsPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold font-heading text-[#192837]">
-                Nagpur CCTV Analytics &amp; Violation Intelligence
+                Nagpur Non-Helmet Violation Analytics &amp; Safety Intelligence
               </h1>
-              <span className="px-3 py-0.5 rounded-full text-xs font-mono-data bg-[#7342E2]/15 text-[#7342E2] border border-[#7342E2]/30 backdrop-blur-md font-bold">
-                PROD TELEMETRY
+              <span className="px-3 py-0.5 rounded-full text-xs font-mono-data bg-red-500/15 text-red-700 border border-red-500/30 backdrop-blur-md font-bold">
+                YOLOv8 + VGG16
               </span>
             </div>
             <p className="text-xs text-[#5A6B7C] mt-0.5">
-              ML vision telemetry tracking without-helmet riders, wrong-way vehicles, and junction enforcement metrics
+              Deep machine learning telemetry on protective headgear compliance and Section 194D e-Challan volume
             </p>
           </div>
 
@@ -159,7 +149,7 @@ export default function AnalyticsPage() {
               onChange={(e) => setSelectedCamera(e.target.value)}
               className="px-4 py-2 rounded-full text-xs font-bold bg-white/60 backdrop-blur-xl border border-white/80 text-[#192837] outline-none cursor-pointer shadow-sm"
             >
-              <option value="all">All Nagpur Junctions</option>
+              <option value="all">All Nagpur Checkpoints</option>
               {cameras.map((cam) => (
                 <option key={cam.id} value={cam.id}>
                   {cam.name}
@@ -169,7 +159,7 @@ export default function AnalyticsPage() {
 
             {/* Export Buttons */}
             <button
-              onClick={() => alert("Generating Nagpur Municipal Traffic Safety & Violation Dossier PDF...")}
+              onClick={() => alert("Generating Nagpur Non-Helmet Enforcement & Fine Dossier PDF...")}
               className="flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
             >
               <Download size={13} />
@@ -184,29 +174,10 @@ export default function AnalyticsPage() {
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-xs font-bold text-[#5A6B7C] uppercase tracking-wider block">
-                  Total Tracked Violations
-                </span>
-                <span className="text-2xl font-bold font-mono-data text-[#192837] mt-1 block">
-                  {totalAlerts}
-                </span>
-              </div>
-              <div className="w-11 h-11 rounded-2xl bg-[#7342E2]/15 text-[#7342E2] border border-[#7342E2]/25 flex items-center justify-center">
-                <Activity size={20} />
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-black/[0.06] text-[11px] text-[#5A6B7C]">
-              <span className="text-emerald-700 font-bold">+18.4%</span> enforcement detection rate
-            </div>
-          </div>
-
-          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)]">
-            <div className="flex justify-between items-start">
-              <div>
-                <span className="text-xs font-bold text-[#5A6B7C] uppercase tracking-wider block">
-                  No-Helmet Ingestion
+                  Total Non-Helmet Cases
                 </span>
                 <span className="text-2xl font-bold font-mono-data text-red-600 mt-1 block">
-                  58% of Total
+                  {totalAlerts}
                 </span>
               </div>
               <div className="w-11 h-11 rounded-2xl bg-red-500/15 text-red-600 border border-red-500/25 flex items-center justify-center">
@@ -214,7 +185,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-black/[0.06] text-[11px] text-[#5A6B7C]">
-              Wardha Rd &amp; Sitabuldi highest density
+              <span className="text-emerald-700 font-bold">+16.8%</span> detection sensitivity
             </div>
           </div>
 
@@ -222,18 +193,18 @@ export default function AnalyticsPage() {
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-xs font-bold text-[#5A6B7C] uppercase tracking-wider block">
-                  Wrong-Side Detection
+                  VGG16 Model Accuracy
                 </span>
-                <span className="text-2xl font-bold font-mono-data text-amber-700 mt-1 block">
-                  26% of Total
+                <span className="text-2xl font-bold font-mono-data text-[#7342E2] mt-1 block">
+                  97.4%
                 </span>
               </div>
-              <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-700 border border-amber-500/25 flex items-center justify-center">
-                <Navigation size={20} className="rotate-180" />
+              <div className="w-11 h-11 rounded-2xl bg-[#7342E2]/15 text-[#7342E2] border border-[#7342E2]/25 flex items-center justify-center">
+                <Activity size={20} />
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-black/[0.06] text-[11px] text-[#5A6B7C]">
-              Average speed: <strong className="text-amber-800">34.2 km/h</strong>
+              Trained on Roboflow &amp; custom head datasets
             </div>
           </div>
 
@@ -241,36 +212,55 @@ export default function AnalyticsPage() {
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-xs font-bold text-[#5A6B7C] uppercase tracking-wider block">
-                  Pipeline AI Latency
+                  ANPR Plate Read Rate
                 </span>
                 <span className="text-2xl font-bold font-mono-data text-emerald-700 mt-1 block">
-                  {(avgLatency / 1000).toFixed(2)}s
+                  95.8%
                 </span>
               </div>
               <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 flex items-center justify-center">
+                <CheckCircle size={20} />
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-black/[0.06] text-[11px] text-[#5A6B7C]">
+              Automated RTO vehicle lookup
+            </div>
+          </div>
+
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)]">
+            <div className="flex justify-between items-start">
+              <div>
+                <span className="text-xs font-bold text-[#5A6B7C] uppercase tracking-wider block">
+                  Inference Latency
+                </span>
+                <span className="text-2xl font-bold font-mono-data text-[#192837] mt-1 block">
+                  {(avgLatency / 1000).toFixed(2)}s
+                </span>
+              </div>
+              <div className="w-11 h-11 rounded-2xl bg-black/[0.05] text-[#192837] border border-black/[0.08] flex items-center justify-center">
                 <Zap size={20} />
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-black/[0.06] text-[11px] text-[#5A6B7C]">
-              Sub-2.0s automatic SMS Challan dispatch
+              Real-time SMS challan dispatch under 2s
             </div>
           </div>
         </div>
 
         {/* ══ Visual Charts Grid ════════════════════════════════════════ */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Chart 1: Hourly Violation Breakdown by Type */}
+          {/* Chart 1: Hourly Breakdown */}
           <div className="p-6 rounded-3xl bg-white/40 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold font-heading text-[#192837]">
-                  Hourly Violation Breakdown (24h)
+                  Hourly Non-Helmet Distribution (24h)
                 </h3>
                 <p className="text-xs text-[#5A6B7C]">
-                  No-Helmet vs Wrong-Side vs Illegal Parking by time of day
+                  Single, double, and triple riding infractions by time of day
                 </p>
               </div>
-              <span className="text-xs font-mono-data text-[#7342E2] font-bold">YOLOv8 Stream</span>
+              <span className="text-xs font-mono-data text-red-600 font-bold">VGG16 Stream</span>
             </div>
 
             <div className="h-[280px] w-full">
@@ -291,23 +281,23 @@ export default function AnalyticsPage() {
                     }}
                   />
                   <Legend wrapperStyle={{ fontSize: 11, color: "#5A6B7C" }} />
-                  <Bar dataKey="No Helmet" fill="#FF3B30" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Wrong Side" fill="#FF9500" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Illegal Parking" fill="#7342E2" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Single Rider No-Helmet" fill="#FF3B30" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Double Rider No-Helmet" fill="#FF9500" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Triple Riding No-Helmet" fill="#7342E2" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Chart 2: 7-Day Multi-Junction Trend */}
+          {/* Chart 2: 7-Day Trend */}
           <div className="p-6 rounded-3xl bg-white/40 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold font-heading text-[#192837]">
-                  7-Day Enforcement Trend Across Junctions
+                  7-Day Non-Helmet Infraction Trend Across Junctions
                 </h3>
                 <p className="text-xs text-[#5A6B7C]">
-                  Comparative timeline of camera node activity
+                  Comparative timeline of camera checkpoint activity
                 </p>
               </div>
               <span className="text-xs font-mono-data text-emerald-700 font-bold">Live Sync</span>
@@ -352,10 +342,10 @@ export default function AnalyticsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold font-heading text-[#192837]">
-                Nagpur Junction Safety &amp; Enforcement Index
+                Nagpur Two-Wheeler Helmet Compliance Scorecard
               </h3>
               <p className="text-xs text-[#5A6B7C]">
-                Aggregated compliance ratings and incident frequency across monitoring nodes
+                Aggregated compliance ratings and Section 194D penalty issuance by monitoring checkpoint
               </p>
             </div>
           </div>
@@ -364,17 +354,19 @@ export default function AnalyticsPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-black/[0.08] text-[#5A6B7C]">
-                  <th className="text-left py-3 px-4 font-bold uppercase">Junction / Node</th>
-                  <th className="text-left py-3 px-4 font-bold uppercase">No-Helmet (7d)</th>
-                  <th className="text-left py-3 px-4 font-bold uppercase">Wrong-Side (7d)</th>
-                  <th className="text-left py-3 px-4 font-bold uppercase">Avg Latency</th>
-                  <th className="text-left py-3 px-4 font-bold uppercase">Safety Score</th>
+                  <th className="text-left py-3 px-4 font-bold uppercase">Checkpoint Node</th>
+                  <th className="text-left py-3 px-4 font-bold uppercase">No-Helmet Detected (7d)</th>
+                  <th className="text-left py-3 px-4 font-bold uppercase">Fines Imposed</th>
+                  <th className="text-left py-3 px-4 font-bold uppercase">VGG16 Conf</th>
+                  <th className="text-left py-3 px-4 font-bold uppercase">Compliance Score</th>
                   <th className="text-left py-3 px-4 font-bold uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/[0.05]">
                 {cameras.map((cam, idx) => {
-                  const safetyScore = 88 + idx * 3;
+                  const complianceScore = 91 + idx * 2;
+                  const cases = 42 + idx * 11;
+                  const fine = cases * 1200;
                   return (
                     <tr key={cam.id} className="hover:bg-white/60 transition-colors">
                       <td className="py-3.5 px-4">
@@ -382,23 +374,23 @@ export default function AnalyticsPage() {
                         <span className="text-[10px] font-mono-data text-[#5A6B7C]">{cam.id}</span>
                       </td>
                       <td className="py-3.5 px-4 font-mono-data font-bold text-red-600">
-                        {38 + idx * 8} Cases
+                        {cases} Violations
                       </td>
-                      <td className="py-3.5 px-4 font-mono-data font-bold text-amber-700">
-                        {18 + idx * 4} Cases
+                      <td className="py-3.5 px-4 font-mono-data font-bold text-[#7342E2]">
+                        ₹{fine.toLocaleString("en-IN")}
                       </td>
                       <td className="py-3.5 px-4 font-mono-data font-bold text-emerald-700">
-                        {(3.8 + idx * 0.4).toFixed(1)}s
+                        {(96.2 + idx * 0.8).toFixed(1)}%
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
                           <div className="w-20 h-2 rounded-full bg-black/10 overflow-hidden">
                             <div
                               className="h-full rounded-full bg-[#7342E2]"
-                              style={{ width: `${safetyScore}%` }}
+                              style={{ width: `${complianceScore}%` }}
                             />
                           </div>
-                          <span className="font-mono-data font-bold text-[#192837]">{safetyScore}%</span>
+                          <span className="font-mono-data font-bold text-[#192837]">{complianceScore}%</span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4">

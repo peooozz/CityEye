@@ -12,11 +12,11 @@ interface NavbarProps {
 }
 
 export const navLinks = [
-  { name: "Live Feeds", href: "/feeds", description: "Real-time 1080p CCTV matrix with AI bounding boxes" },
-  { name: "Incident Alerts", href: "/incidents", description: "Live incident detection & dispatch triage" },
-  { name: "Analytics", href: "/analytics", description: "Traffic flow, peak hours & incident intelligence" },
-  { name: "Junctions", href: "/junctions", description: "Nagpur smart city camera nodes & zone configuration" },
-  { name: "System Health", href: "/system-health", description: "GPU telemetry, TensorRT FPS & edge engine status" },
+  { name: "Live Feeds", href: "/feeds", description: "Real-time CCTV stream with YOLOv8 + VGG16 Helmet HUD" },
+  { name: "Non-Helmet Triage", href: "/incidents", description: "Live Non-Helmet detection & automated Section 194D Challans" },
+  { name: "Compliance Analytics", href: "/analytics", description: "Two-wheeler helmet compliance & violation rate trends" },
+  { name: "Checkpoints", href: "/junctions", description: "Nagpur smart camera checkpoint nodes & VGG16 calibration" },
+  { name: "Model Telemetry", href: "/system-health", description: "YOLOv8 + VGG16 + ANPR OCR inference engine status" },
 ];
 
 export function Navbar({ variant = "glass-light" }: NavbarProps) {

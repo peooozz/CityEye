@@ -5,20 +5,19 @@ import { Navbar } from "@/components/navbar";
 import { useDashboardStore } from "@/lib/store";
 import { useSimulatedSocket } from "@/lib/simulated-socket";
 import { getEventLabel } from "@/lib/mock-data";
-import { Alert, AlertStatus, AlertEventType } from "@/lib/types";
+import { Alert, AlertStatus } from "@/lib/types";
 import {
   ShieldAlert,
-  Navigation,
   AlertTriangle,
   Check,
   X,
   Search,
   Clock,
   MapPin,
-  Zap,
   ChevronRight,
   FileCheck2,
-  Share2,
+  Cpu,
+  UserCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -29,30 +28,31 @@ export default function IncidentsPage() {
   const addNote = useDashboardStore((s) => s.addNote);
 
   const [statusFilter, setStatusFilter] = useState<AlertStatus | "all">("all");
-  const [eventTypeFilter, setEventTypeFilter] = useState<string>("all");
+  const [riderFilter, setRiderFilter] = useState<string>("all");
   const [selectedIncident, setSelectedIncident] = useState<Alert | null>(null);
   const [noteText, setNoteText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredAlerts = alerts.filter((alert) => {
     if (statusFilter !== "all" && alert.status !== statusFilter) return false;
-    if (eventTypeFilter !== "all" && alert.eventType !== eventTypeFilter) return false;
+    if (riderFilter !== "all" && String(alert.riderCount) !== riderFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return (
         alert.id.toLowerCase().includes(q) ||
         alert.cameraName.toLowerCase().includes(q) ||
-        alert.eventType.toLowerCase().includes(q) ||
         (alert.licensePlate && alert.licensePlate.toLowerCase().includes(q))
       );
     }
     return true;
   });
 
-  const noHelmetCount = alerts.filter((a) => a.eventType === "no_helmet").length;
-  const wrongSideCount = alerts.filter((a) => a.eventType === "wrong_side" || a.eventType === "wrong_way").length;
+  const totalViolations = alerts.length;
   const newCount = alerts.filter((a) => a.status === "new").length;
   const resolvedCount = alerts.filter((a) => a.status === "resolved").length;
+  const totalFineDispatched = alerts
+    .filter((a) => a.status === "acknowledged" || a.status === "resolved")
+    .reduce((sum, a) => sum + (a.fineAmountInr || 1000), 0);
 
   return (
     <div className="relative min-h-screen w-full bg-[#FAF9F6] text-[#192837] overflow-x-hidden selection:bg-[#7342E2] selection:text-white font-body">
@@ -65,11 +65,11 @@ export default function IncidentsPage() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-25"
         >
-          <source src="/videos/cctv_hero.mp4" type="video/mp4" />
+          <source src="/videos/helmet_traffic_raw.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-white/65 via-white/40 to-white/75" />
         <div className="absolute -top-40 right-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/10 blur-[130px]" />
-        <div className="absolute top-1/3 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF4D4F]/8 blur-[140px]" />
+        <div className="absolute top-1/3 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF3B30]/8 blur-[140px]" />
       </div>
 
       {/* ══ Top Cylinder Glassmorphism Navbar ══════════════════════════ */}
@@ -78,21 +78,20 @@ export default function IncidentsPage() {
       </div>
 
       <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
-        {/* ══ Header & ML Metric Cards Row ══════════════════════════════ */}
+        {/* ══ Header & Quick Stats Row ═══════════════════════════════════ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* No Helmet Card */}
           <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
-                No-Helmet Detections
+                Total Non-Helmet Detections
               </span>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-2xl font-bold font-mono-data text-red-600">
-                  {noHelmetCount}
+                  {totalViolations}
                 </span>
                 <span className="text-[11px] text-red-600 font-bold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-                  YOLOv8 Head Model
+                  YOLO + VGG16
                 </span>
               </div>
             </div>
@@ -101,56 +100,53 @@ export default function IncidentsPage() {
             </div>
           </div>
 
-          {/* Wrong Side Card */}
           <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
-                Wrong-Side Vehicles
+                Pending Triage / New
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-amber-700">
-                  {wrongSideCount}
+                <span className="text-2xl font-bold font-mono-data text-[#D97706]">
+                  {newCount}
                 </span>
-                <span className="text-[11px] text-amber-700 font-bold">180° Angle Contravention</span>
+                <span className="text-[11px] text-[#5A6B7C]">Awaiting Challan</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-700 border border-amber-500/25 flex items-center justify-center">
-              <Navigation size={20} className="rotate-180" />
-            </div>
-          </div>
-
-          {/* Triage Pending */}
-          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
-                Pending Triage
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-[#192837]">
-                  {newCount} Cases
-                </span>
-                <span className="text-[11px] text-[#5A6B7C]">Requires Action</span>
-              </div>
-            </div>
-            <div className="w-11 h-11 rounded-2xl bg-black/[0.05] text-[#192837] border border-black/[0.08] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-[#D97706] border border-amber-500/25 flex items-center justify-center">
               <Clock size={20} />
             </div>
           </div>
 
-          {/* Challans Issued */}
           <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
-                E-Challans Dispatched
+                E-Challans Settled
               </span>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-2xl font-bold font-mono-data text-emerald-700">
                   {resolvedCount}
                 </span>
-                <span className="text-[11px] text-emerald-700 font-bold">Automatic ANPR Sync</span>
+                <span className="text-[11px] text-emerald-700 font-bold">RTO Verified</span>
               </div>
             </div>
             <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 flex items-center justify-center">
+              <Check size={20} />
+            </div>
+          </div>
+
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
+                Total Penalties Imposed
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl font-bold font-mono-data text-[#7342E2]">
+                  ₹{totalFineDispatched.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[11px] text-[#7342E2] font-bold">Section 194D MV Act</span>
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-2xl bg-[#7342E2]/15 text-[#7342E2] border border-[#7342E2]/25 flex items-center justify-center">
               <FileCheck2 size={20} />
             </div>
           </div>
@@ -163,7 +159,7 @@ export default function IncidentsPage() {
             <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A6B7C]" />
             <input
               type="text"
-              placeholder="Search by Plate (e.g. MH-31), Junction, or Alert ID..."
+              placeholder="Search by License Plate (e.g. MH-31), Junction, or Alert ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white/60 border border-white/80 text-xs text-[#192837] placeholder-[#8B93A3] focus:outline-none focus:border-[#7342E2] focus:bg-white transition-all shadow-sm font-medium"
@@ -172,39 +168,47 @@ export default function IncidentsPage() {
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* Quick Violation Category Filter */}
+            {/* Rider Count Filter */}
             <div className="flex items-center gap-1 p-1 rounded-full bg-white/50 backdrop-blur-xl border border-white/70 shadow-sm">
               <button
-                onClick={() => setEventTypeFilter("all")}
+                onClick={() => setRiderFilter("all")}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  eventTypeFilter === "all"
+                  riderFilter === "all"
                     ? "bg-[#7342E2] text-white shadow-md"
                     : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/60"
                 }`}
               >
-                All
+                All Riders
               </button>
               <button
-                onClick={() => setEventTypeFilter("no_helmet")}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                  eventTypeFilter === "no_helmet"
+                onClick={() => setRiderFilter("1")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  riderFilter === "1"
+                    ? "bg-[#7342E2] text-white shadow-md"
+                    : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/60"
+                }`}
+              >
+                Single Rider (₹1,000)
+              </button>
+              <button
+                onClick={() => setRiderFilter("2")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  riderFilter === "2"
+                    ? "bg-[#7342E2] text-white shadow-md"
+                    : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/60"
+                }`}
+              >
+                Double Rider (₹2,000)
+              </button>
+              <button
+                onClick={() => setRiderFilter("3")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  riderFilter === "3"
                     ? "bg-red-600 text-white shadow-md"
                     : "text-red-700 hover:bg-red-500/10"
                 }`}
               >
-                <ShieldAlert size={12} />
-                <span>No Helmet</span>
-              </button>
-              <button
-                onClick={() => setEventTypeFilter("wrong_side")}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                  eventTypeFilter === "wrong_side"
-                    ? "bg-amber-600 text-white shadow-md"
-                    : "text-amber-800 hover:bg-amber-500/10"
-                }`}
-              >
-                <Navigation size={12} className="rotate-180" />
-                <span>Wrong Side</span>
+                Triple Riding (₹3,000)
               </button>
             </div>
 
@@ -231,15 +235,8 @@ export default function IncidentsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {filteredAlerts.slice(0, 24).map((alert) => {
-              const isNoHelmet = alert.eventType === "no_helmet";
-              const isWrongSide = alert.eventType === "wrong_side" || alert.eventType === "wrong_way";
-
-              const borderColor = isNoHelmet
+              const borderColor = alert.status === "new"
                 ? "#FF3B30"
-                : isWrongSide
-                ? "#FF9500"
-                : alert.status === "new"
-                ? "#E53E3E"
                 : alert.status === "acknowledged"
                 ? "#D97706"
                 : "#10B981";
@@ -262,16 +259,13 @@ export default function IncidentsPage() {
                           <span className="text-[10px] font-mono-data text-[#5A6B7C] block">
                             {alert.id} · {alert.trackId}
                           </span>
-                          {alert.licensePlate && (
-                            <span className="px-2 py-0.2 rounded bg-black/80 text-white font-mono-data text-[9.5px] font-bold">
-                              {alert.licensePlate}
-                            </span>
-                          )}
+                          <span className="px-2 py-0.2 rounded bg-black/85 text-white font-mono-data text-[9.5px] font-bold">
+                            {alert.licensePlate}
+                          </span>
                         </div>
                         <h3 className="font-bold text-sm text-[#192837] mt-0.5 flex items-center gap-1.5">
-                          {isNoHelmet && <ShieldAlert size={14} className="text-red-600" />}
-                          {isWrongSide && <Navigation size={14} className="text-amber-700 rotate-180" />}
-                          <span>{getEventLabel(alert.eventType)}</span>
+                          <ShieldAlert size={14} className="text-red-600" />
+                          <span>Non-Helmet ({alert.riderCount} Rider{alert.riderCount > 1 ? "s" : ""})</span>
                         </h3>
                       </div>
                       <span
@@ -292,7 +286,7 @@ export default function IncidentsPage() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={alert.snapshotUrl}
-                          alt="Incident frame"
+                          alt="Non-Helmet Frame"
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -305,14 +299,12 @@ export default function IncidentsPage() {
                           Detected: {new Date(alert.detectedAt).toLocaleTimeString("en-IN")}
                         </div>
                         <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-[#7342E2]/15 text-[#7342E2] font-bold border border-[#7342E2]/30">
-                            Match: {Math.round(alert.confidence * 100)}%
+                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-red-500/15 text-red-700 font-bold border border-red-500/30">
+                            VGG16: {Math.round(alert.vgg16Confidence * 100)}%
                           </span>
-                          {alert.speedKmph && (
-                            <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 font-bold border border-amber-500/30">
-                              {alert.speedKmph} km/h
-                            </span>
-                          )}
+                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-[#7342E2]/15 text-[#7342E2] font-bold border border-[#7342E2]/30">
+                            Fine: ₹{alert.fineAmountInr || 1000}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -324,7 +316,7 @@ export default function IncidentsPage() {
                       onClick={() => setSelectedIncident(alert)}
                       className="text-xs font-bold text-[#7342E2] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                      <span>ANPR &amp; Audit Dossier</span>
+                      <span>VGG16 ROI &amp; ANPR</span>
                       <ChevronRight size={13} />
                     </button>
 
@@ -332,7 +324,7 @@ export default function IncidentsPage() {
                       {alert.status === "new" && (
                         <>
                           <button
-                            onClick={() => updateAlertStatus(alert.id, "acknowledged", "Officer On-Duty")}
+                            onClick={() => updateAlertStatus(alert.id, "acknowledged", "Duty Officer")}
                             className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-sm transition-colors cursor-pointer flex items-center gap-1"
                           >
                             <FileCheck2 size={12} />
@@ -349,11 +341,11 @@ export default function IncidentsPage() {
                       )}
                       {alert.status === "acknowledged" && (
                         <button
-                          onClick={() => updateAlertStatus(alert.id, "resolved", "Officer On-Duty")}
+                          onClick={() => updateAlertStatus(alert.id, "resolved", "Duty Officer")}
                           className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-800 border border-emerald-500/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <Check size={12} />
-                          Fine Paid / Close
+                          Fine Paid / Settle
                         </button>
                       )}
                       {alert.status === "resolved" && (
@@ -391,10 +383,11 @@ export default function IncidentsPage() {
               <div className="flex items-center justify-between pb-4 border-b border-black/[0.08]">
                 <div>
                   <span className="text-xs font-mono-data text-[#5A6B7C] block">
-                    TRAFFIC ENFORCEMENT CASE // {selectedIncident.id}
+                    HELMET ENFORCEMENT CASE // {selectedIncident.id}
                   </span>
-                  <h2 className="text-lg font-bold font-heading text-[#192837] mt-0.5">
-                    {getEventLabel(selectedIncident.eventType)}
+                  <h2 className="text-lg font-bold font-heading text-[#192837] mt-0.5 flex items-center gap-2">
+                    <ShieldAlert size={18} className="text-red-600" />
+                    <span>Non-Helmet Violation</span>
                   </h2>
                 </div>
                 <button
@@ -410,7 +403,7 @@ export default function IncidentsPage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedIncident.snapshotUrl}
-                  alt="Snapshot frame"
+                  alt="Non-Helmet frame"
                   className="w-full aspect-video object-cover"
                 />
               </div>
@@ -418,36 +411,40 @@ export default function IncidentsPage() {
               {/* Metadata Table with ANPR & Fine Details */}
               <div className="rounded-2xl bg-white/60 backdrop-blur-xl border border-white divide-y divide-black/[0.06] text-xs shadow-sm">
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#5A6B7C]">License Plate (ANPR)</span>
-                  <span className="font-mono-data font-bold text-[#192837] bg-black/5 px-2 py-0.5 rounded">
-                    {selectedIncident.licensePlate || "MH-31-BK-4091"}
+                  <span className="text-[#5A6B7C]">License Plate (ANPR OCR)</span>
+                  <span className="font-mono-data font-bold text-[#192837] bg-black/5 px-2.5 py-0.5 rounded">
+                    {selectedIncident.licensePlate}
                   </span>
                 </div>
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#5A6B7C]">Vehicle Classification</span>
-                  <span className="font-bold text-[#192837]">{selectedIncident.vehicleType || "Motorcycle"}</span>
+                  <span className="text-[#5A6B7C]">Two-Wheeler Class</span>
+                  <span className="font-bold text-[#192837]">{selectedIncident.vehicleType}</span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">Riders Without Helmet</span>
+                  <span className="font-bold text-red-600">{selectedIncident.riderCount} Person(s)</span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">Stage 1 YOLOv8 Confidence</span>
+                  <span className="font-mono-data font-bold text-[#7342E2]">
+                    {Math.round(selectedIncident.yoloConfidence * 100)}% Match
+                  </span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">Stage 2 VGG16 Head Classifier</span>
+                  <span className="font-mono-data font-bold text-red-600">
+                    {Math.round(selectedIncident.vgg16Confidence * 100)}% Without-Helmet
+                  </span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">Applicable Statutory Penalty</span>
+                  <span className="font-mono-data font-bold text-red-600">
+                    ₹{selectedIncident.fineAmountInr || 1000} (Section 194D MV Act)
+                  </span>
                 </div>
                 <div className="flex justify-between px-4 py-3">
                   <span className="text-[#5A6B7C]">Camera Junction</span>
                   <span className="font-bold text-[#192837]">{selectedIncident.cameraName}</span>
-                </div>
-                <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#5A6B7C]">AI Model Confidence</span>
-                  <span className="font-mono-data font-bold text-[#7342E2]">
-                    {Math.round(selectedIncident.confidence * 100)}% Match
-                  </span>
-                </div>
-                <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#5A6B7C]">Applicable Fine (Nagpur RTO)</span>
-                  <span className="font-mono-data font-bold text-red-600">
-                    {selectedIncident.eventType === "no_helmet" ? "₹1,000 (Section 194D)" : "₹5,000 (Section 184 Dangerous Driving)"}
-                  </span>
-                </div>
-                <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#5A6B7C]">Detection Timestamp</span>
-                  <span className="font-mono-data text-[#192837] font-semibold">
-                    {new Date(selectedIncident.detectedAt).toLocaleString("en-IN")}
-                  </span>
                 </div>
               </div>
 
@@ -474,13 +471,13 @@ export default function IncidentsPage() {
                   <button
                     onClick={() => {
                       updateAlertStatus(selectedIncident.id, "acknowledged", "Duty Officer");
-                      alert(`Digital E-Challan dispatched via SMS to vehicle owner for ${selectedIncident.licensePlate || "MH-31-BK-4091"}`);
+                      alert(`Digital E-Challan fine of ₹${selectedIncident.fineAmountInr || 1000} dispatched via SMS to vehicle owner for ${selectedIncident.licensePlate}!`);
                       setSelectedIncident(null);
                     }}
                     className="flex-1 py-3.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <FileCheck2 size={14} />
-                    <span>Issue E-Challan via SMS</span>
+                    <span>Issue E-Challan (₹{selectedIncident.fineAmountInr || 1000})</span>
                   </button>
                 )}
                 {selectedIncident.status === "acknowledged" && (

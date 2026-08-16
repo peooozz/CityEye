@@ -6,6 +6,7 @@ import { Camera } from "@/lib/types";
 import {
   Plus,
   Edit3,
+  ShieldAlert,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,16 +22,16 @@ interface ExtendedJunction extends Camera {
 const junctionsData: ExtendedJunction[] = [
   {
     id: "CAM-001",
-    name: "Wardha Road Junction",
+    name: "Wardha Road Checkpoint",
     location: { lat: 21.1256, lng: 79.0725 },
     status: "online",
     fps: 30,
     ipAddress: "192.168.10.101",
-    hardwareModel: "Hikvision DS-2CD2386G2-ISU/SL (4K PTZ)",
-    activeZone: "No-Parking Corridor & Rapid Speed Enforcement",
+    hardwareModel: "Hikvision DS-2CD2386G2-ISU/SL (4K Optical)",
+    activeZone: "Two-Wheeler Helmet & Speed Enforcement Zone",
     totalLanes: 6,
     coverageAngle: "120° Wide-Angle Pan",
-    dailyTrafficEstimate: "64,000+ Vehicles",
+    dailyTrafficEstimate: "42,000+ Motorcycles",
   },
   {
     id: "CAM-002",
@@ -40,10 +41,10 @@ const junctionsData: ExtendedJunction[] = [
     fps: 25,
     ipAddress: "192.168.10.102",
     hardwareModel: "Axis Q1656-LE (8MP AI Object Detection)",
-    activeZone: "Commercial Market Footpath & Pedestrian Safe-Zone",
+    activeZone: "Metro Plaza Two-Wheeler Ingress Corridor",
     totalLanes: 4,
     coverageAngle: "180° Panoramic Multi-Sensor",
-    dailyTrafficEstimate: "92,000+ Pedestrians & Vehicles",
+    dailyTrafficEstimate: "58,000+ Two-Wheelers",
   },
   {
     id: "CAM-003",
@@ -53,10 +54,10 @@ const junctionsData: ExtendedJunction[] = [
     fps: 30,
     ipAddress: "192.168.10.103",
     hardwareModel: "Dahua WizMind IPC-HFW7842H-Z (Ultra AI)",
-    activeZone: "Wrong-Way Vehicle & Illegal U-Turn Perimeter",
+    activeZone: "Rotary Two-Wheeler Safety Checkpoint",
     totalLanes: 4,
     coverageAngle: "95° Fixed High-Density Corridor",
-    dailyTrafficEstimate: "48,000+ Vehicles",
+    dailyTrafficEstimate: "32,000+ Motorcycles",
   },
   {
     id: "CAM-004",
@@ -66,10 +67,10 @@ const junctionsData: ExtendedJunction[] = [
     fps: 28,
     ipAddress: "192.168.10.104",
     hardwareModel: "Bosch FLEXIDOME IP starlight 8000i",
-    activeZone: "Waterfront Boulevard Speed & Perimeter Safety",
+    activeZone: "Waterfront Boulevard Two-Wheeler Patrol",
     totalLanes: 4,
     coverageAngle: "110° Low-Light Starlight Sensor",
-    dailyTrafficEstimate: "35,000+ Vehicles",
+    dailyTrafficEstimate: "24,000+ Two-Wheelers",
   },
 ];
 
@@ -87,16 +88,13 @@ export default function JunctionsPage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
         >
-          <source
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
-            type="video/mp4"
-          />
+          <source src="/videos/helmet_traffic_raw.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/65 via-white/40 to-white/75" />
         <div className="absolute -top-40 left-1/3 w-[600px] h-[600px] rounded-full bg-[#7342E2]/10 blur-[130px]" />
-        <div className="absolute top-1/2 -left-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/10 blur-[140px]" />
+        <div className="absolute top-1/2 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF3B30]/8 blur-[140px]" />
       </div>
 
       {/* ══ Cylinder Glassmorphism Navbar ══════════════════════════════ */}
@@ -110,14 +108,15 @@ export default function JunctionsPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold font-heading text-[#192837]">
-                Nagpur CCTV Junctions &amp; Node Infrastructure
+                Nagpur Helmet Enforcement Checkpoints
               </h1>
-              <span className="px-3 py-0.5 rounded-full text-xs font-mono-data bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 backdrop-blur-md font-bold">
-                4 Active Nodes
+              <span className="px-3 py-0.5 rounded-full text-xs font-mono-data bg-red-500/15 text-red-700 border border-red-500/30 backdrop-blur-md font-bold flex items-center gap-1">
+                <ShieldAlert size={12} />
+                4 Active AI Checkpoints
               </span>
             </div>
             <p className="text-xs text-[#5A6B7C] mt-0.5">
-              Geospatial placement, AI zone calibration, hardware specs, and RTSP stream controls for Nagpur Smart Mobility
+              Geospatial placement, VGG16 head-crop calibration, and RTSP stream controls for Nagpur Smart Mobility
             </p>
           </div>
 
@@ -126,16 +125,16 @@ export default function JunctionsPage() {
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
           >
             <Plus size={14} />
-            <span>Add New Node</span>
+            <span>Add Checkpoint Node</span>
           </button>
         </div>
 
         {/* ══ Main Two-Column Layout ═════════════════════════════════════ */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Junctions Selection Cards (5 cols) */}
+          {/* Left Column: Checkpoint Selection Cards (5 cols) */}
           <div className="lg:col-span-5 space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#5A6B7C] px-1">
-              Select Junction Node to Inspect
+              Select Checkpoint Node to Calibrate
             </h2>
 
             <div className="space-y-3">
@@ -187,7 +186,7 @@ export default function JunctionsPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-black/[0.08] gap-2">
                 <div>
                   <span className="text-xs font-mono-data text-[#7342E2] font-bold block">
-                    ACTIVE NODE CALIBRATION
+                    ACTIVE CHECKPOINT CALIBRATION
                   </span>
                   <h2 className="text-lg font-bold font-heading text-[#192837] mt-0.5">
                     {selectedJunction.name}
@@ -203,7 +202,7 @@ export default function JunctionsPage() {
                     }`}
                   >
                     <Edit3 size={13} />
-                    <span>{isEditingZone ? "Save Polygon Zone" : "Calibrate Zone"}</span>
+                    <span>{isEditingZone ? "Save Calibration" : "Calibrate Head ROI"}</span>
                   </button>
                 </div>
               </div>
@@ -211,7 +210,6 @@ export default function JunctionsPage() {
               {/* Interactive SVG Zone Calibration Frame */}
               <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#0C121E] border border-white/40 shadow-inner">
                 <svg viewBox="0 0 640 360" className="w-full h-full object-cover">
-                  {/* Grid */}
                   <defs>
                     <pattern id="calib-grid" width="20" height="20" patternUnits="userSpaceOnUse">
                       <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
@@ -219,34 +217,33 @@ export default function JunctionsPage() {
                   </defs>
                   <rect width="640" height="360" fill="url(#calib-grid)" />
 
-                  {/* Junction Geometry */}
                   <polygon
                     points="80,100 280,80 320,290 60,310"
-                    fill="rgba(115,66,226,0.25)"
-                    stroke="#7342E2"
+                    fill="rgba(255,59,48,0.2)"
+                    stroke="#FF3B30"
                     strokeWidth={isEditingZone ? "3" : "2"}
                     strokeDasharray={isEditingZone ? "4 4" : "none"}
                   />
                   {isEditingZone && (
                     <g>
-                      <circle cx="80" cy="100" r="6" fill="#7342E2" stroke="white" strokeWidth="2" />
-                      <circle cx="280" cy="80" r="6" fill="#7342E2" stroke="white" strokeWidth="2" />
-                      <circle cx="320" cy="290" r="6" fill="#7342E2" stroke="white" strokeWidth="2" />
-                      <circle cx="60" cy="310" r="6" fill="#7342E2" stroke="white" strokeWidth="2" />
+                      <circle cx="80" cy="100" r="6" fill="#FF3B30" stroke="white" strokeWidth="2" />
+                      <circle cx="280" cy="80" r="6" fill="#FF3B30" stroke="white" strokeWidth="2" />
+                      <circle cx="320" cy="290" r="6" fill="#FF3B30" stroke="white" strokeWidth="2" />
+                      <circle cx="60" cy="310" r="6" fill="#FF3B30" stroke="white" strokeWidth="2" />
                     </g>
                   )}
 
-                  <text x="110" y="200" fill="#D4BFFF" fontSize="12" fontFamily="monospace" fontWeight="bold">
+                  <text x="110" y="200" fill="#FF8080" fontSize="12" fontFamily="monospace" fontWeight="bold">
                     ZONE: {selectedJunction.activeZone.toUpperCase()}
                   </text>
                   <text x="14" y="24" fill="rgba(255,255,255,0.7)" fontSize="10" fontFamily="monospace">
-                    CALIBRATION HUD // {selectedJunction.id} ({selectedJunction.location.lat.toFixed(4)}, {selectedJunction.location.lng.toFixed(4)})
+                    HELMET DETECTION HUD // {selectedJunction.id} ({selectedJunction.location.lat.toFixed(4)}, {selectedJunction.location.lng.toFixed(4)})
                   </text>
                 </svg>
 
                 {isEditingZone && (
-                  <div className="absolute top-3 right-3 px-3.5 py-1 rounded-full bg-[#7342E2] text-white text-xs font-bold shadow-lg animate-pulse">
-                    Interactive Zone Editor Mode Active
+                  <div className="absolute top-3 right-3 px-3.5 py-1 rounded-full bg-red-600 text-white text-xs font-bold shadow-lg animate-pulse">
+                    Interactive Head-Crop ROI Editor Active
                   </div>
                 )}
               </div>
@@ -259,8 +256,8 @@ export default function JunctionsPage() {
                 </div>
 
                 <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white space-y-1 shadow-sm">
-                  <span className="text-[#5A6B7C] text-[11px] block uppercase font-semibold">Lens Coverage</span>
-                  <span className="font-bold text-[#192837] block">{selectedJunction.coverageAngle}</span>
+                  <span className="text-[#5A6B7C] text-[11px] block uppercase font-semibold">Model Pipeline</span>
+                  <span className="font-bold text-[#7342E2] block">YOLOv8 + VGG16 Two-Stage</span>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white space-y-1 shadow-sm">
@@ -271,7 +268,7 @@ export default function JunctionsPage() {
                 </div>
 
                 <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white space-y-1 shadow-sm">
-                  <span className="text-[#5A6B7C] text-[11px] block uppercase font-semibold">Traffic Capacity</span>
+                  <span className="text-[#5A6B7C] text-[11px] block uppercase font-semibold">Two-Wheeler Volume</span>
                   <span className="font-bold text-emerald-700 block">{selectedJunction.dailyTrafficEstimate}</span>
                 </div>
               </div>
@@ -297,17 +294,17 @@ export default function JunctionsPage() {
               className="w-full max-w-md rounded-3xl bg-white/95 backdrop-blur-3xl border border-white p-6 space-y-4 shadow-2xl text-[#192837]"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-base font-bold font-heading text-[#192837]">Add New Nagpur CCTV Node</h2>
+              <h2 className="text-base font-bold font-heading text-[#192837]">Add New Helmet Checkpoint Node</h2>
               <p className="text-xs text-[#5A6B7C]">
-                Register a new municipal camera junction into the AI inference cluster.
+                Register a new municipal camera checkpoint into the YOLO + VGG16 inference cluster.
               </p>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-[#5A6B7C] font-semibold block mb-1">Junction Name</label>
+                  <label className="text-[#5A6B7C] font-semibold block mb-1">Checkpoint Name</label>
                   <input
                     type="text"
-                    placeholder="e.g. Mankapur Ring Road Junction"
+                    placeholder="e.g. Mankapur Ring Road Checkpoint"
                     className="w-full p-3 rounded-2xl bg-white/70 border border-white text-[#192837] focus:outline-none focus:border-[#7342E2] focus:bg-white shadow-sm"
                   />
                 </div>
@@ -320,12 +317,10 @@ export default function JunctionsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[#5A6B7C] font-semibold block mb-1">AI Detection Zone Type</label>
+                  <label className="text-[#5A6B7C] font-semibold block mb-1">Inference Engine</label>
                   <select className="w-full p-3 rounded-2xl bg-white/70 border border-white text-[#192837] focus:outline-none focus:border-[#7342E2] focus:bg-white shadow-sm">
-                    <option>No Parking &amp; Tow Zone</option>
-                    <option>Speed Enforcement (60 km/h)</option>
-                    <option>Wrong Way Corridor</option>
-                    <option>Crowd Density &amp; Perimeter</option>
+                    <option>YOLOv8 Motorcycle + VGG16 Head-Crop (Recommended)</option>
+                    <option>YOLOv8 + VGG16 + ANPR Plate OCR</option>
                   </select>
                 </div>
               </div>
@@ -339,12 +334,12 @@ export default function JunctionsPage() {
                 </button>
                 <button
                   onClick={() => {
-                    alert("New camera node registered successfully!");
+                    alert("New helmet checkpoint node registered successfully!");
                     setShowAddModal(false);
                   }}
                   className="flex-1 py-3 rounded-full bg-[#7342E2] hover:bg-[#6434d3] text-white text-xs font-bold shadow-md transition-colors cursor-pointer"
                 >
-                  Register Node
+                  Register Checkpoint
                 </button>
               </div>
             </motion.div>
