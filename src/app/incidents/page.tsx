@@ -4,23 +4,21 @@ import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { useDashboardStore } from "@/lib/store";
 import { useSimulatedSocket } from "@/lib/simulated-socket";
-import { getEventLabel, cameras } from "@/lib/mock-data";
+import { getEventLabel } from "@/lib/mock-data";
 import { Alert, AlertStatus, AlertEventType } from "@/lib/types";
 import {
+  ShieldAlert,
+  Navigation,
   AlertTriangle,
-  Shield,
-  Eye,
   Check,
   X,
-  Send,
-  Zap,
-  Filter,
   Search,
   Clock,
   MapPin,
-  FileText,
-  Radio,
+  Zap,
   ChevronRight,
+  FileCheck2,
+  Share2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,181 +42,207 @@ export default function IncidentsPage() {
       return (
         alert.id.toLowerCase().includes(q) ||
         alert.cameraName.toLowerCase().includes(q) ||
-        alert.eventType.toLowerCase().includes(q)
+        alert.eventType.toLowerCase().includes(q) ||
+        (alert.licensePlate && alert.licensePlate.toLowerCase().includes(q))
       );
     }
     return true;
   });
 
+  const noHelmetCount = alerts.filter((a) => a.eventType === "no_helmet").length;
+  const wrongSideCount = alerts.filter((a) => a.eventType === "wrong_side" || a.eventType === "wrong_way").length;
   const newCount = alerts.filter((a) => a.status === "new").length;
-  const ackCount = alerts.filter((a) => a.status === "acknowledged").length;
   const resolvedCount = alerts.filter((a) => a.status === "resolved").length;
 
   return (
-    <div className="relative min-h-screen w-full bg-[#07090E] text-[#E6E8EC] overflow-x-hidden selection:bg-[#7342E2] selection:text-white">
-      {/* ══ Ambient Glowing Glass Backdrops ════════════════════════════ */}
+    <div className="relative min-h-screen w-full bg-[#FAF9F6] text-[#192837] overflow-x-hidden selection:bg-[#7342E2] selection:text-white font-body">
+      {/* ══ Ambient Video & Luminous Liquid Glows ═════════════════════ */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 right-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/15 blur-[140px]" />
-        <div className="absolute top-1/3 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF4D4F]/10 blur-[150px]" />
-        <div className="absolute -bottom-40 right-1/3 w-[650px] h-[650px] rounded-full bg-[#0084FF]/10 blur-[160px]" />
-        {/* Subtle video background overlay */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-screen"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
         >
-          <source
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
-            type="video/mp4"
-          />
+          <source src="/videos/cctv_hero.mp4" type="video/mp4" />
         </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/65 via-white/40 to-white/75" />
+        <div className="absolute -top-40 right-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/10 blur-[130px]" />
+        <div className="absolute top-1/3 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF4D4F]/8 blur-[140px]" />
       </div>
 
       {/* ══ Top Cylinder Glassmorphism Navbar ══════════════════════════ */}
       <div className="relative z-20 pt-3 pb-2">
-        <Navbar variant="glass-dark" />
+        <Navbar variant="glass-light" />
       </div>
 
       <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
-        {/* ══ Header & Quick Stats Row ═══════════════════════════════════ */}
+        {/* ══ Header & ML Metric Cards Row ══════════════════════════════ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
+          {/* No Helmet Card */}
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
-              <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
-                Critical / New Alerts
+              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
+                No-Helmet Detections
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-[#FF4D4F]">
-                  {newCount}
+                <span className="text-2xl font-bold font-mono-data text-red-600">
+                  {noHelmetCount}
                 </span>
-                <span className="text-[11px] text-[#FF4D4F]/90 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D4F] animate-pulse" />
-                  Requires Triage
+                <span className="text-[11px] text-red-600 font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+                  YOLOv8 Head Model
                 </span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-2xl bg-red-500/15 text-[#FF4D4F] border border-red-500/20 flex items-center justify-center">
-              <AlertTriangle size={20} />
+            <div className="w-11 h-11 rounded-2xl bg-red-500/15 text-red-600 border border-red-500/25 flex items-center justify-center">
+              <ShieldAlert size={20} />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
+          {/* Wrong Side Card */}
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
-              <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
-                In-Progress / Ack&apos;d
+              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
+                Wrong-Side Vehicles
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-[#F5A623]">
-                  {ackCount}
+                <span className="text-2xl font-bold font-mono-data text-amber-700">
+                  {wrongSideCount}
                 </span>
-                <span className="text-[11px] text-[#8B93A3]">Patrol Dispatched</span>
+                <span className="text-[11px] text-amber-700 font-bold">180° Angle Contravention</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-[#F5A623] border border-amber-500/20 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-700 border border-amber-500/25 flex items-center justify-center">
+              <Navigation size={20} className="rotate-180" />
+            </div>
+          </div>
+
+          {/* Triage Pending */}
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
+                Pending Triage
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl font-bold font-mono-data text-[#192837]">
+                  {newCount} Cases
+                </span>
+                <span className="text-[11px] text-[#5A6B7C]">Requires Action</span>
+              </div>
+            </div>
+            <div className="w-11 h-11 rounded-2xl bg-black/[0.05] text-[#192837] border border-black/[0.08] flex items-center justify-center">
               <Clock size={20} />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
+          {/* Challans Issued */}
+          <div className="p-5 rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex items-center justify-between">
             <div>
-              <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
-                Resolved Today
+              <span className="text-xs font-bold text-[#5A6B7C] block uppercase tracking-wider">
+                E-Challans Dispatched
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-[#3DD68C]">
+                <span className="text-2xl font-bold font-mono-data text-emerald-700">
                   {resolvedCount}
                 </span>
-                <span className="text-[11px] text-emerald-400">98.4% Resolution</span>
+                <span className="text-[11px] text-emerald-700 font-bold">Automatic ANPR Sync</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-[#3DD68C] border border-emerald-500/20 flex items-center justify-center">
-              <Check size={20} />
-            </div>
-          </div>
-
-          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
-            <div>
-              <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
-                Mean Dispatch Time
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold font-mono-data text-[#0084FF]">
-                  1.4 min
-                </span>
-                <span className="text-[11px] text-blue-400">-18s vs SLA</span>
-              </div>
-            </div>
-            <div className="w-11 h-11 rounded-2xl bg-blue-500/15 text-[#0084FF] border border-blue-500/20 flex items-center justify-center">
-              <Zap size={20} />
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 flex items-center justify-center">
+              <FileCheck2 size={20} />
             </div>
           </div>
         </div>
 
         {/* ══ Filter & Search Bar ════════════════════════════════════════ */}
-        <div className="p-4 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="p-4 rounded-3xl bg-white/40 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
-            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8B93A3]" />
+            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A6B7C]" />
             <input
               type="text"
-              placeholder="Search by Alert ID, Junction name, or event type..."
+              placeholder="Search by Plate (e.g. MH-31), Junction, or Alert ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white/[0.04] border border-white/10 text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2] focus:bg-white/[0.07] transition-all"
+              className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white/60 border border-white/80 text-xs text-[#192837] placeholder-[#8B93A3] focus:outline-none focus:border-[#7342E2] focus:bg-white transition-all shadow-sm font-medium"
             />
           </div>
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center gap-2">
+            {/* Quick Violation Category Filter */}
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white/50 backdrop-blur-xl border border-white/70 shadow-sm">
+              <button
+                onClick={() => setEventTypeFilter("all")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  eventTypeFilter === "all"
+                    ? "bg-[#7342E2] text-white shadow-md"
+                    : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/60"
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setEventTypeFilter("no_helmet")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  eventTypeFilter === "no_helmet"
+                    ? "bg-red-600 text-white shadow-md"
+                    : "text-red-700 hover:bg-red-500/10"
+                }`}
+              >
+                <ShieldAlert size={12} />
+                <span>No Helmet</span>
+              </button>
+              <button
+                onClick={() => setEventTypeFilter("wrong_side")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  eventTypeFilter === "wrong_side"
+                    ? "bg-amber-600 text-white shadow-md"
+                    : "text-amber-800 hover:bg-amber-500/10"
+                }`}
+              >
+                <Navigation size={12} className="rotate-180" />
+                <span>Wrong Side</span>
+              </button>
+            </div>
+
             {/* Status Selector */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white/50 backdrop-blur-xl border border-white/70 shadow-sm">
               {(["all", "new", "acknowledged", "resolved"] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium capitalize transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold capitalize transition-all cursor-pointer ${
                     statusFilter === st
-                      ? "bg-[#7342E2] text-white shadow-[0_2px_12px_rgba(115,66,226,0.4)]"
-                      : "text-[#8B93A3] hover:text-white"
+                      ? "bg-[#192837] text-white shadow-md"
+                      : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/60"
                   }`}
                 >
                   {st === "all" ? "All Status" : st}
                 </button>
               ))}
             </div>
-
-            {/* Event Type Filter */}
-            <select
-              value={eventTypeFilter}
-              onChange={(e) => setEventTypeFilter(e.target.value)}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white outline-none cursor-pointer"
-            >
-              <option value="all" className="bg-[#12151C]">All Incident Types</option>
-              <option value="illegal_parking" className="bg-[#12151C]">Illegal Parking</option>
-              <option value="wrong_way" className="bg-[#12151C]">Wrong-Way Movement</option>
-              <option value="loitering" className="bg-[#12151C]">Loitering Detected</option>
-              <option value="crowd_density" className="bg-[#12151C]">Crowd Density Surge</option>
-            </select>
           </div>
         </div>
 
         {/* ══ Incidents Stream Grid ══════════════════════════════════════ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {filteredAlerts.slice(0, 24).map((alert) => {
-              const isNew = alert.status === "new";
-              const isAck = alert.status === "acknowledged";
-              const isRes = alert.status === "resolved";
+              const isNoHelmet = alert.eventType === "no_helmet";
+              const isWrongSide = alert.eventType === "wrong_side" || alert.eventType === "wrong_way";
 
-              const borderColor = isNew
-                ? "#FF4D4F"
-                : isAck
-                ? "#F5A623"
-                : isRes
-                ? "#3DD68C"
-                : "#5A6172";
+              const borderColor = isNoHelmet
+                ? "#FF3B30"
+                : isWrongSide
+                ? "#FF9500"
+                : alert.status === "new"
+                ? "#E53E3E"
+                : alert.status === "acknowledged"
+                ? "#D97706"
+                : "#10B981";
 
               return (
                 <motion.div
@@ -227,25 +251,34 @@ export default function IncidentsPage() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 overflow-hidden hover:border-[#7342E2]/60 hover:shadow-[0_8px_32px_rgba(115,66,226,0.18)] transition-all duration-200 flex flex-col justify-between"
-                  style={{ borderLeft: `4px solid ${borderColor}` }}
+                  className="rounded-3xl bg-white/45 backdrop-blur-3xl border border-white/80 overflow-hidden hover:border-[#7342E2]/60 hover:shadow-[0_12px_36px_rgba(115,66,226,0.12)] transition-all duration-200 flex flex-col justify-between shadow-[0_8px_32px_rgba(25,40,55,0.05)]"
+                  style={{ borderLeft: `5px solid ${borderColor}` }}
                 >
                   {/* Top Details */}
                   <div className="p-5 space-y-3.5">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="text-[10px] font-mono-data text-[#8B93A3] block">
-                          {alert.id} · Track: {alert.trackId}
-                        </span>
-                        <h3 className="font-bold text-sm text-white mt-0.5">
-                          {getEventLabel(alert.eventType)}
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono-data text-[#5A6B7C] block">
+                            {alert.id} · {alert.trackId}
+                          </span>
+                          {alert.licensePlate && (
+                            <span className="px-2 py-0.2 rounded bg-black/80 text-white font-mono-data text-[9.5px] font-bold">
+                              {alert.licensePlate}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-bold text-sm text-[#192837] mt-0.5 flex items-center gap-1.5">
+                          {isNoHelmet && <ShieldAlert size={14} className="text-red-600" />}
+                          {isWrongSide && <Navigation size={14} className="text-amber-700 rotate-180" />}
+                          <span>{getEventLabel(alert.eventType)}</span>
                         </h3>
                       </div>
                       <span
-                        className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border"
+                        className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border"
                         style={{
                           backgroundColor: `${borderColor}15`,
-                          borderColor: `${borderColor}30`,
+                          borderColor: `${borderColor}40`,
                           color: borderColor,
                         }}
                       >
@@ -255,7 +288,7 @@ export default function IncidentsPage() {
 
                     {/* Snapshot & Camera Info */}
                     <div className="flex gap-3.5">
-                      <div className="w-24 h-16 rounded-xl bg-[#05070B] overflow-hidden flex-shrink-0 border border-white/10">
+                      <div className="w-24 h-16 rounded-2xl bg-[#0C121E] overflow-hidden flex-shrink-0 border border-white/40 shadow-inner">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={alert.snapshotUrl}
@@ -264,32 +297,34 @@ export default function IncidentsPage() {
                         />
                       </div>
                       <div className="flex-1 text-xs space-y-1">
-                        <div className="flex items-center gap-1.5 text-white font-medium">
+                        <div className="flex items-center gap-1.5 text-[#192837] font-semibold">
                           <MapPin size={12} className="text-[#7342E2] flex-shrink-0" />
                           <span className="truncate">{alert.cameraName}</span>
                         </div>
-                        <div className="text-[11px] text-[#8B93A3] font-mono-data">
+                        <div className="text-[11px] text-[#5A6B7C] font-mono-data">
                           Detected: {new Date(alert.detectedAt).toLocaleTimeString("en-IN")}
                         </div>
                         <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-[#7342E2]/15 text-[#c2a4ff] border border-[#7342E2]/25">
-                            Conf: {Math.round(alert.confidence * 100)}%
+                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-[#7342E2]/15 text-[#7342E2] font-bold border border-[#7342E2]/30">
+                            Match: {Math.round(alert.confidence * 100)}%
                           </span>
-                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            Latency: {(alert.latencyMs / 1000).toFixed(1)}s
-                          </span>
+                          {alert.speedKmph && (
+                            <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 font-bold border border-amber-500/30">
+                              {alert.speedKmph} km/h
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.08] flex items-center justify-between gap-2">
+                  <div className="px-5 py-3 bg-white/40 border-t border-white/60 flex items-center justify-between gap-2">
                     <button
                       onClick={() => setSelectedIncident(alert)}
-                      className="text-xs font-semibold text-[#c2a4ff] hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                      className="text-xs font-bold text-[#7342E2] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                      <span>Full Audit Log</span>
+                      <span>ANPR &amp; Audit Dossier</span>
                       <ChevronRight size={13} />
                     </button>
 
@@ -298,13 +333,14 @@ export default function IncidentsPage() {
                         <>
                           <button
                             onClick={() => updateAlertStatus(alert.id, "acknowledged", "Officer On-Duty")}
-                            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-[#F5A623] border border-amber-500/40 shadow-sm transition-colors cursor-pointer"
+                            className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-sm transition-colors cursor-pointer flex items-center gap-1"
                           >
-                            Ack &amp; Dispatch
+                            <FileCheck2 size={12} />
+                            Issue Challan
                           </button>
                           <button
                             onClick={() => updateAlertStatus(alert.id, "false_positive")}
-                            className="p-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#8B93A3] hover:text-white border border-white/10 transition-colors cursor-pointer"
+                            className="p-2 rounded-full bg-white/60 hover:bg-white text-[#5A6B7C] hover:text-[#192837] border border-white/80 shadow-sm transition-colors cursor-pointer"
                             title="False Positive"
                           >
                             <X size={13} />
@@ -314,15 +350,15 @@ export default function IncidentsPage() {
                       {alert.status === "acknowledged" && (
                         <button
                           onClick={() => updateAlertStatus(alert.id, "resolved", "Officer On-Duty")}
-                          className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-[#3DD68C] border border-emerald-500/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1"
+                          className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-800 border border-emerald-500/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <Check size={12} />
-                          Resolve
+                          Fine Paid / Close
                         </button>
                       )}
                       {alert.status === "resolved" && (
-                        <span className="text-[11px] text-emerald-400 font-mono-data">
-                          ✓ Closed Case
+                        <span className="text-[11px] text-emerald-700 font-mono-data font-bold">
+                          ✓ Challan Settled
                         </span>
                       )}
                     </div>
@@ -341,7 +377,7 @@ export default function IncidentsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex justify-end bg-[#192837]/40 backdrop-blur-md"
             onClick={() => setSelectedIncident(null)}
           >
             <motion.div
@@ -349,28 +385,28 @@ export default function IncidentsPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 26, stiffness: 300 }}
-              className="w-full max-w-lg h-full bg-[#12151C]/90 backdrop-blur-3xl border-l border-white/15 p-6 overflow-y-auto space-y-6 shadow-2xl"
+              className="w-full max-w-lg h-full bg-white/95 backdrop-blur-3xl border-l border-white p-6 overflow-y-auto space-y-6 shadow-2xl text-[#192837]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div className="flex items-center justify-between pb-4 border-b border-black/[0.08]">
                 <div>
-                  <span className="text-xs font-mono-data text-[#8B93A3] block">
-                    INCIDENT CASE // {selectedIncident.id}
+                  <span className="text-xs font-mono-data text-[#5A6B7C] block">
+                    TRAFFIC ENFORCEMENT CASE // {selectedIncident.id}
                   </span>
-                  <h2 className="text-lg font-bold text-white mt-0.5">
+                  <h2 className="text-lg font-bold font-heading text-[#192837] mt-0.5">
                     {getEventLabel(selectedIncident.eventType)}
                   </h2>
                 </div>
                 <button
                   onClick={() => setSelectedIncident(null)}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-full bg-black/[0.05] hover:bg-black/[0.1] text-[#192837] transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Snapshot Display */}
-              <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#05070B]">
+              <div className="rounded-2xl overflow-hidden border border-white bg-[#0C121E] shadow-inner">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedIncident.snapshotUrl}
@@ -379,46 +415,56 @@ export default function IncidentsPage() {
                 />
               </div>
 
-              {/* Metadata Table */}
-              <div className="rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 divide-y divide-white/10 text-xs">
+              {/* Metadata Table with ANPR & Fine Details */}
+              <div className="rounded-2xl bg-white/60 backdrop-blur-xl border border-white divide-y divide-black/[0.06] text-xs shadow-sm">
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#8B93A3]">Camera Junction</span>
-                  <span className="font-semibold text-white">{selectedIncident.cameraName}</span>
+                  <span className="text-[#5A6B7C]">License Plate (ANPR)</span>
+                  <span className="font-mono-data font-bold text-[#192837] bg-black/5 px-2 py-0.5 rounded">
+                    {selectedIncident.licensePlate || "MH-31-BK-4091"}
+                  </span>
                 </div>
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#8B93A3]">AI Confidence Score</span>
-                  <span className="font-mono-data font-bold text-[#c2a4ff]">
+                  <span className="text-[#5A6B7C]">Vehicle Classification</span>
+                  <span className="font-bold text-[#192837]">{selectedIncident.vehicleType || "Motorcycle"}</span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">Camera Junction</span>
+                  <span className="font-bold text-[#192837]">{selectedIncident.cameraName}</span>
+                </div>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-[#5A6B7C]">AI Model Confidence</span>
+                  <span className="font-mono-data font-bold text-[#7342E2]">
                     {Math.round(selectedIncident.confidence * 100)}% Match
                   </span>
                 </div>
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#8B93A3]">Detection Timestamp</span>
-                  <span className="font-mono-data text-white">
-                    {new Date(selectedIncident.detectedAt).toLocaleString("en-IN")}
+                  <span className="text-[#5A6B7C]">Applicable Fine (Nagpur RTO)</span>
+                  <span className="font-mono-data font-bold text-red-600">
+                    {selectedIncident.eventType === "no_helmet" ? "₹1,000 (Section 194D)" : "₹5,000 (Section 184 Dangerous Driving)"}
                   </span>
                 </div>
                 <div className="flex justify-between px-4 py-3">
-                  <span className="text-[#8B93A3]">Pipeline Latency</span>
-                  <span className="font-mono-data text-[#3DD68C]">
-                    {(selectedIncident.latencyMs / 1000).toFixed(2)}s (Sub-SLA)
+                  <span className="text-[#5A6B7C]">Detection Timestamp</span>
+                  <span className="font-mono-data text-[#192837] font-semibold">
+                    {new Date(selectedIncident.detectedAt).toLocaleString("en-IN")}
                   </span>
                 </div>
               </div>
 
               {/* Operator Notes Box */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#8B93A3] block">
-                  Operator Incident Log &amp; Notes
+                <label className="text-xs font-bold uppercase tracking-wider text-[#5A6B7C] block">
+                  Enforcement Officer Action Log
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Enter dispatch notes, officer badge ID, or municipal report details..."
+                  placeholder="Enter officer notes, RTO notice dispatch ID, or towing remarks..."
                   value={noteText || selectedIncident.notes || ""}
                   onChange={(e) => setNoteText(e.target.value)}
                   onBlur={() => {
                     if (noteText) addNote(selectedIncident.id, noteText);
                   }}
-                  className="w-full p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2] focus:bg-white/[0.07] resize-none"
+                  className="w-full p-3.5 rounded-2xl bg-white/70 border border-white text-xs text-[#192837] placeholder-[#8B93A3] focus:outline-none focus:border-[#7342E2] focus:bg-white resize-none shadow-sm font-medium"
                 />
               </div>
 
@@ -428,11 +474,13 @@ export default function IncidentsPage() {
                   <button
                     onClick={() => {
                       updateAlertStatus(selectedIncident.id, "acknowledged", "Duty Officer");
+                      alert(`Digital E-Challan dispatched via SMS to vehicle owner for ${selectedIncident.licensePlate || "MH-31-BK-4091"}`);
                       setSelectedIncident(null);
                     }}
-                    className="flex-1 py-3.5 rounded-full text-xs font-semibold bg-[#F5A623] hover:bg-[#e09315] text-[#0B0E14] shadow-lg transition-all cursor-pointer"
+                    className="flex-1 py-3.5 rounded-full text-xs font-bold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    Acknowledge &amp; Dispatch Patrol
+                    <FileCheck2 size={14} />
+                    <span>Issue E-Challan via SMS</span>
                   </button>
                 )}
                 {selectedIncident.status === "acknowledged" && (
@@ -441,9 +489,9 @@ export default function IncidentsPage() {
                       updateAlertStatus(selectedIncident.id, "resolved", "Duty Officer");
                       setSelectedIncident(null);
                     }}
-                    className="flex-1 py-3.5 rounded-full text-xs font-semibold bg-[#3DD68C] hover:bg-[#32be7a] text-[#0B0E14] shadow-lg transition-all cursor-pointer"
+                    className="flex-1 py-3.5 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all cursor-pointer"
                   >
-                    Mark Resolved
+                    Mark Resolved &amp; Fine Settled
                   </button>
                 )}
               </div>

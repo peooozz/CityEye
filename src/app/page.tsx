@@ -1,180 +1,159 @@
 "use client";
 
-import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  ArrowRightCircle,
+  ShieldAlert,
+  Navigation,
+  ArrowRight,
   Zap,
   LockKeyhole,
   Fingerprint,
-  ChevronRight,
+  Activity,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 
-/* ═══════════════════════════════════════════════════════════════════════
-   ANIMATION VARIANTS
-   ═══════════════════════════════════════════════════════════════════════ */
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.15,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
-
-export default function LandingPage() {
+export default function Home() {
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden flex flex-col justify-between selection:bg-[#7342E2] selection:text-white">
-      {/* ══ Full-Viewport Background Video ═════════════════════════════ */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none"
-      >
-        <source
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
-          type="video/mp4"
-        />
-      </video>
+    <div className="relative min-h-screen w-full bg-[#FAF9F6] text-[#192837] overflow-x-hidden selection:bg-[#7342E2] selection:text-white font-body">
+      {/* ══ Video & Ambient Liquid Glows ═══════════════════════════════ */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-35"
+        >
+          <source src="/videos/cctv_hero.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/70" />
+        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/10 blur-[130px]" />
+        <div className="absolute top-1/3 -right-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/10 blur-[140px]" />
+      </div>
 
-      {/* Subtle glass overlay gradient */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 via-transparent to-white/40 pointer-events-none" />
+      {/* ══ Cylinder Floating Glass Navbar ═════════════════════════════ */}
+      <div className="relative z-20 pt-3 pb-2">
+        <Navbar variant="glass-light" />
+      </div>
 
-      {/* ══ Floating Cylinder Glassmorphism Navbar ═════════════════════ */}
-      <Navbar variant="glass-light" />
+      {/* ══ Hero Section ═══════════════════════════════════════════════ */}
+      <main className="relative z-10 max-w-[1240px] mx-auto px-4 sm:px-6 pt-10 pb-20 flex flex-col items-center text-center">
+        {/* Hackathon Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/40 backdrop-blur-2xl border border-white/80 shadow-[0_4px_16px_rgba(115,66,226,0.12),inset_0_1px_2px_rgba(255,255,255,0.9)] text-xs font-semibold text-[#192837] mb-8"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#7342E2] animate-pulse" />
+          <span className="font-mono-data text-[#7342E2] font-bold">HACKATHON PROTOTYPE</span>
+          <span className="text-black/30">|</span>
+          <span className="text-[#5A6B7C]">Nagpur Municipal AI CCTV Network</span>
+        </motion.div>
 
-      {/* ══ Hero Content ════════════════════════════════════════════════ */}
-      <main className="relative z-10 w-full max-w-[1280px] mx-auto px-5 sm:px-8 pt-[clamp(32px,6vw,60px)] pb-12 flex flex-col items-center justify-center flex-grow">
-        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
-          {/* Hackathon Prototype Badge */}
-          <motion.div
-            custom={0}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/80 shadow-[0_2px_12px_rgba(25,40,55,0.06)] mb-6"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#7342E2] animate-pulse" />
-            <span className="text-xs font-semibold text-[#7342E2] tracking-wide uppercase">
-              AI Video Analytics Hackathon Prototype · Nagpur Smart City
+        {/* Main Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-4xl sm:text-6xl md:text-7xl font-bold font-heading tracking-tight leading-[1.08] max-w-4xl text-[#192837]"
+        >
+          AI-Assisted CCTV{" "}
+          <span className="inline-flex items-center mx-1 align-middle">
+            <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/50 backdrop-blur-xl border border-white/80 shadow-md flex items-center justify-center text-red-600">
+              <ShieldAlert size={22} />
             </span>
-          </motion.div>
-
-          {/* Headline (h1) */}
-          <motion.h1
-            custom={0.5}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="font-heading text-[clamp(1.75rem,5.5vw,3.15rem)] leading-[1.05] tracking-[-0.01em] text-[var(--color-text)] mb-6"
-          >
-            <span className="block whitespace-normal sm:whitespace-nowrap">
-              Transform{" "}
-              <Zap
-                size={26}
-                style={{
-                  color: "#192837",
-                  display: "inline",
-                  verticalAlign: "middle",
-                  position: "relative",
-                  top: "-2px",
-                  margin: "0 4px",
-                }}
-              />{" "}
-              Every{" "}
-              <LockKeyhole
-                size={26}
-                style={{
-                  color: "#192837",
-                  display: "inline",
-                  verticalAlign: "middle",
-                  position: "relative",
-                  top: "-2px",
-                  margin: "0 4px",
-                }}
-              />{" "}
-              CCTV Camera
+          </span>{" "}
+          Video Monitoring &amp;{" "}
+          <span className="inline-flex items-center mx-1 align-middle">
+            <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/50 backdrop-blur-xl border border-white/80 shadow-md flex items-center justify-center text-amber-600">
+              <Navigation size={22} className="rotate-180" />
             </span>
-            <span className="block mt-1 sm:mt-2">
-              with Real-Time AI Vision{" "}
-              <Fingerprint
-                size={26}
-                style={{
-                  color: "#192837",
-                  display: "inline",
-                  verticalAlign: "middle",
-                  position: "relative",
-                  top: "-2px",
-                  marginLeft: "6px",
-                }}
-              />
-            </span>
-          </motion.h1>
+          </span>{" "}
+          Violation Detection
+        </motion.h1>
 
-          {/* Subtext */}
-          <motion.p
-            custom={1}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="font-body text-[clamp(0.95rem,2.5vw,1.125rem)] text-[var(--color-text)] opacity-85 max-w-[600px] leading-[1.65] mb-8"
-          >
-            Zero blindspots, millisecond response. Autonomous anomaly detection,
-            live traffic &amp; crowd monitoring, and instant incident alerts across
-            Nagpur&apos;s municipal CCTV network.
-          </motion.p>
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-6 text-base sm:text-lg md:text-xl text-[#5A6B7C] max-w-2xl font-normal leading-relaxed"
+        >
+          High-precision real-time computer vision for municipal CCTV networks. Automatically tracks <strong>Without-Helmet Riders</strong>, detects <strong>Wrong-Side Vehicles</strong> with directional optical flow, and triggers instant e-Challans under 2 seconds.
+        </motion.p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            custom={2}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="w-full flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link href="/feeds">
-              <motion.button
-                whileHover={{ scale: 1.04, filter: "brightness(1.1)" }}
-                whileTap={{ scale: 0.96 }}
-                style={{
-                  borderRadius: "50px",
-                  backgroundColor: "#7342E2",
-                  boxShadow: "0 8px 30px rgba(115,66,226,0.35)",
-                  minWidth: "240px",
-                  padding: "17px 28px",
-                }}
-                className="flex items-center justify-between gap-8 text-white font-semibold text-[clamp(0.9rem,2vw,1rem)] transition-all cursor-pointer"
-              >
-                <span>Launch Live Feeds</span>
-                <ArrowRightCircle size={20} className="text-white flex-shrink-0" />
-              </motion.button>
-            </Link>
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-3.5"
+        >
+          <Link href="/feeds">
+            <motion.button
+              whileHover={{ scale: 1.04, filter: "brightness(1.08)" }}
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full text-sm font-bold text-white bg-[#7342E2] shadow-[0_8px_24px_rgba(115,66,226,0.35)] hover:shadow-[0_12px_32px_rgba(115,66,226,0.45)] transition-all cursor-pointer"
+            >
+              <span>Launch Live AI Feeds</span>
+              <ArrowRight size={16} />
+            </motion.button>
+          </Link>
 
-            <Link href="/incidents">
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-2 px-7 py-4 rounded-full bg-white/40 hover:bg-white/70 text-[#192837] font-semibold text-[clamp(0.9rem,2vw,1rem)] border border-white/60 backdrop-blur-md shadow-sm transition-all cursor-pointer"
-              >
-                <span>View Incident Triage</span>
-                <ChevronRight size={16} />
-              </motion.button>
-            </Link>
-          </motion.div>
-        </div>
+          <Link href="/incidents">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold bg-white/50 hover:bg-white/80 text-[#192837] border border-white/80 shadow-[0_8px_24px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] backdrop-blur-xl transition-all cursor-pointer"
+            >
+              <ShieldAlert size={16} className="text-red-600" />
+              <span>No-Helmet &amp; Wrong-Side Triage</span>
+            </motion.button>
+          </Link>
+        </motion.div>
+
+        {/* Quick Highlights Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-14 p-4 sm:p-5 rounded-3xl bg-white/40 backdrop-blur-3xl border border-white/80 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.9)] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-3xl w-full"
+        >
+          <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/50 border border-white/60">
+            <div className="p-2 rounded-xl bg-red-500/15 text-red-600">
+              <ShieldAlert size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#192837]">No-Helmet AI</h4>
+              <p className="text-[11px] text-[#5A6B7C] mt-0.5">YOLOv8 head-region detection on two-wheelers</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/50 border border-white/60">
+            <div className="p-2 rounded-xl bg-amber-500/15 text-amber-700">
+              <Navigation size={18} className="rotate-180" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#192837]">Wrong-Side Vector</h4>
+              <p className="text-[11px] text-[#5A6B7C] mt-0.5">Optical flow trajectory &amp; reverse lane angle detection</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/50 border border-white/60">
+            <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-700">
+              <Zap size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#192837]">Sub-40ms Latency</h4>
+              <p className="text-[11px] text-[#5A6B7C] mt-0.5">TensorRT FP16 acceleration on 1080p RTSP feeds</p>
+            </div>
+          </div>
+        </motion.div>
       </main>
-
-      {/* ══ Bottom Footer ═══════════════════════════════════════════════ */}
-      <footer className="relative z-10 w-full py-4 text-center text-xs text-[var(--color-text)] opacity-60">
-        City Eye — AI Video Analytics Prototype &copy; {new Date().getFullYear()} · Nagpur Smart CCTV Network
-      </footer>
     </div>
   );
 }

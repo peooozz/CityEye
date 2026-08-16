@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Activity, Shield } from "lucide-react";
+import { Menu, X, ArrowRight, Activity } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 interface NavbarProps {
@@ -22,28 +22,21 @@ export const navLinks = [
 export function Navbar({ variant = "glass-light" }: NavbarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isDark = variant === "glass-dark";
 
   return (
-    <header className="sticky top-4 z-50 w-full max-w-[1360px] mx-auto px-4 sm:px-6">
-      {/* ══ Floating Cylinder Ultra-Transparent Liquid Glassmorphism Container ════════════════════════════ */}
-      <div
-        className={`w-full rounded-full flex items-center justify-between px-3 sm:px-5 py-2 transition-all duration-300 ${
-          isDark
-            ? "bg-[#12151C]/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)]"
-            : "bg-white/[0.18] backdrop-blur-3xl border border-white/50 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.7)]"
-        }`}
-      >
+    <header className="sticky top-3 z-50 w-full max-w-[1360px] mx-auto px-4 sm:px-6">
+      {/* ══ Floating Cylinder Ultra-Transparent White Glassmorphism Container ════════════════════════════ */}
+      <div className="w-full rounded-full flex items-center justify-between px-3 sm:px-5 py-2 transition-all duration-300 bg-white/40 backdrop-blur-3xl border border-white/70 shadow-[0_8px_32px_rgba(25,40,55,0.06),inset_0_1px_2px_rgba(255,255,255,0.8)]">
         {/* Left: Logo */}
         <Link
           href="/"
           className="flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          <Logo size="sm" variant={isDark ? "dark" : "light"} />
+          <Logo size="sm" variant="light" />
         </Link>
 
         {/* Center: Desktop Cylinder Glassmorphism Hover Navigation Buttons */}
-        <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-white/[0.12] dark:bg-white/[0.04] border border-white/30 dark:border-white/10 backdrop-blur-md">
+        <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-white/30 border border-white/50 backdrop-blur-md">
           {navLinks.map((item) => {
             const isActive = pathname === item.href || (item.href === "/feeds" && pathname === "/dashboard");
             return (
@@ -53,10 +46,8 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
                   whileTap={{ scale: 0.96 }}
                   className={`relative px-4 py-1.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? "bg-[#7342E2] text-white shadow-[0_4px_16px_rgba(115,66,226,0.4)]"
-                      : isDark
-                      ? "text-[#8B93A3] hover:text-[#E6E8EC] hover:bg-white/[0.12] hover:backdrop-blur-xl hover:shadow-[0_2px_10px_rgba(0,0,0,0.2)]"
-                      : "text-[#192837]/85 hover:text-[#192837] hover:bg-white/50 hover:backdrop-blur-xl hover:shadow-[0_2px_12px_rgba(255,255,255,0.4)]"
+                      ? "bg-[#7342E2] text-white shadow-[0_4px_16px_rgba(115,66,226,0.35)]"
+                      : "text-[#192837]/80 hover:text-[#192837] hover:bg-white/70 hover:backdrop-blur-xl hover:shadow-[0_2px_12px_rgba(255,255,255,0.5)]"
                   }`}
                 >
                   {isActive && (
@@ -95,11 +86,7 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
-              className={`flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-full transition-all cursor-pointer ${
-                isDark
-                  ? "bg-white/[0.06] text-[#E6E8EC] hover:bg-white/[0.12] border border-white/10"
-                  : "bg-white/40 text-[#192837] hover:bg-white/70 border border-white/60 shadow-sm backdrop-blur-md"
-              }`}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-full bg-white/50 hover:bg-white/80 text-[#192837] border border-white/70 shadow-sm backdrop-blur-md transition-all cursor-pointer"
             >
               <Activity size={13} className="text-[#3DD68C]" />
               <span className="hidden md:inline">Online</span>
@@ -110,9 +97,7 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className={`lg:hidden p-2 rounded-full transition-colors cursor-pointer ${
-            isDark ? "text-white hover:bg-white/10" : "text-[#192837] hover:bg-white/30"
-          }`}
+          className="lg:hidden p-2 rounded-full text-[#192837] hover:bg-white/50 transition-colors cursor-pointer"
           aria-label="Open navigation menu"
         >
           <Menu size={20} />
@@ -129,7 +114,7 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[6px]"
+              className="fixed inset-0 z-50 bg-[#192837]/30 backdrop-blur-[6px]"
             />
 
             <motion.div
@@ -137,16 +122,16 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed right-0 top-0 z-50 h-[100dvh] w-[min(90vw,380px)] flex flex-col justify-between p-6 bg-[#12151C] border-l border-[#232733] text-[#E6E8EC] shadow-2xl"
+              className="fixed right-0 top-0 z-50 h-[100dvh] w-[min(90vw,380px)] flex flex-col justify-between p-6 bg-white/90 backdrop-blur-2xl border-l border-white/60 text-[#192837] shadow-2xl"
             >
               <div>
                 {/* Header */}
-                <div className="flex items-center justify-between pb-6 border-b border-[#232733]">
-                  <Logo size="sm" variant="dark" />
+                <div className="flex items-center justify-between pb-6 border-b border-black/[0.08]">
+                  <Logo size="sm" variant="light" />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
+                    className="w-9 h-9 rounded-full flex items-center justify-center bg-black/[0.06] hover:bg-black/[0.1] text-[#192837] transition-colors cursor-pointer"
                   >
                     <X size={18} />
                   </motion.button>
@@ -168,12 +153,12 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
                           onClick={() => setMobileMenuOpen(false)}
                           className={`flex flex-col gap-0.5 px-4 py-3 rounded-2xl transition-all ${
                             isActive
-                              ? "bg-[#7342E2] text-white"
-                              : "hover:bg-white/[0.06] text-[#8B93A3] hover:text-[#E6E8EC]"
+                              ? "bg-[#7342E2] text-white shadow-md"
+                              : "hover:bg-black/[0.04] text-[#192837]/80 hover:text-[#192837]"
                           }`}
                         >
                           <span className="font-semibold text-sm">{item.name}</span>
-                          <span className="text-[11px] opacity-70 truncate">{item.description}</span>
+                          <span className="text-[11px] opacity-75 truncate">{item.description}</span>
                         </Link>
                       </motion.div>
                     );
@@ -182,7 +167,7 @@ export function Navbar({ variant = "glass-light" }: NavbarProps) {
               </div>
 
               {/* Bottom CTAs */}
-              <div className="flex flex-col gap-2.5 pt-6 border-t border-[#232733]">
+              <div className="flex flex-col gap-2.5 pt-6 border-t border-black/[0.08]">
                 <Link href="/feeds" onClick={() => setMobileMenuOpen(false)} className="w-full">
                   <button className="w-full py-3 rounded-full text-xs font-semibold text-white bg-[#7342E2] shadow-lg hover:bg-[#6434d3] transition-all cursor-pointer flex items-center justify-center gap-2">
                     <span>Open Live Console</span>
