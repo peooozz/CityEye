@@ -45,9 +45,9 @@ function DashboardNav() {
   ];
 
   return (
-    <header className="sticky top-2 z-40 px-4 py-2">
+    <header className="sticky top-3 z-50 px-4 sm:px-6">
       <div
-        className="w-full rounded-full flex items-center justify-between px-4 py-2.5 bg-[#12151C]/90 backdrop-blur-2xl border border-[#232733] shadow-xl"
+        className="w-full rounded-full flex items-center justify-between px-4 py-2 bg-white/[0.04] backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)]"
       >
         {/* Left */}
         <div className="flex items-center gap-3">
@@ -58,7 +58,7 @@ function DashboardNav() {
             <ChevronLeft size={14} />
             <span className="hidden sm:inline">Landing Page</span>
           </Link>
-          <div className="w-px h-4 bg-[#232733]" />
+          <div className="w-px h-4 bg-white/10" />
           <Logo size="sm" variant="dark" />
           <span className="text-[11px] font-mono-data text-[#8B93A3] hidden md:inline">
             Console
@@ -66,7 +66,7 @@ function DashboardNav() {
         </div>
 
         {/* Center: Cylinder Glassmorphism Navigation Buttons */}
-        <nav className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-white/[0.03] border border-white/[0.04]">
+        <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md">
           {navLinks.map((link) => {
             const active = pathname === link.href || (link.href === "/feeds" && pathname === "/dashboard");
             return (
@@ -77,7 +77,7 @@ function DashboardNav() {
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 cursor-pointer ${
                     active
                       ? "bg-[#7342E2] text-white shadow-[0_4px_14px_rgba(115,66,226,0.35)]"
-                      : "text-[#8B93A3] hover:text-white hover:bg-white/[0.08] hover:backdrop-blur-md"
+                      : "text-[#8B93A3] hover:text-white hover:bg-white/[0.1] hover:backdrop-blur-md"
                   }`}
                 >
                   {link.label}
@@ -90,7 +90,7 @@ function DashboardNav() {
         {/* Right */}
         <div className="flex items-center gap-2.5">
           {/* System Status Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             {onlineCams}/{cameras.length} Online
           </div>
@@ -99,13 +99,13 @@ function DashboardNav() {
           <div className="relative">
             <button
               onClick={() => setShowRoleMenu(!showRoleMenu)}
-              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-[#181C25] hover:bg-[#232733] border border-[#232733] text-[#E6E8EC] transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-[#E6E8EC] transition-colors cursor-pointer"
             >
               <span>{role}</span>
               <ChevronDown size={11} />
             </button>
             {showRoleMenu && (
-              <div className="absolute right-0 mt-1 rounded-xl py-1 min-w-[120px] bg-[#181C25] border border-[#232733] shadow-2xl z-50">
+              <div className="absolute right-0 mt-2 rounded-2xl py-1.5 min-w-[130px] bg-[#12151C]/90 backdrop-blur-2xl border border-white/15 shadow-2xl z-50">
                 {(["Operator", "Admin"] as const).map((r) => (
                   <button
                     key={r}
@@ -113,8 +113,8 @@ function DashboardNav() {
                       setRole(r);
                       setShowRoleMenu(false);
                     }}
-                    className={`block w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
-                      r === role ? "text-[#7342E2] font-bold bg-[#7342E2]/10" : "text-[#8B93A3] hover:text-white hover:bg-white/5"
+                    className={`block w-full text-left px-4 py-2 text-xs transition-colors cursor-pointer ${
+                      r === role ? "text-[#c2a4ff] font-bold bg-[#7342E2]/20" : "text-[#8B93A3] hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {r}
@@ -142,9 +142,18 @@ export default function DashboardLayout({
   useSimulatedSocket();
 
   return (
-    <div className="dashboard-theme min-h-screen bg-[#0B0E14] text-[#E6E8EC]">
-      <DashboardNav />
-      <main className="p-4 md:p-6">{children}</main>
+    <div className="dashboard-theme relative min-h-screen w-full bg-[#07090E] text-[#E6E8EC] overflow-x-hidden selection:bg-[#7342E2] selection:text-white">
+      {/* Ambient Glowing Glass Backdrops */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/15 blur-[140px]" />
+        <div className="absolute top-1/3 -right-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/12 blur-[150px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[650px] rounded-full bg-[#3DD68C]/10 blur-[160px]" />
+      </div>
+
+      <div className="relative z-10">
+        <DashboardNav />
+        <main className="p-4 md:p-6">{children}</main>
+      </div>
     </div>
   );
 }

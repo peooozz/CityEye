@@ -30,12 +30,10 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function LiveFeedsPage() {
   useSimulatedSocket();
   const [selectedCam, setSelectedCam] = useState<string>("all");
-  const [gridMode, setGridMode] = useState<"2x2" | "single" | "3x3">("2x2");
+  const [gridMode, setGridMode] = useState<"2x2" | "single">("2x2");
   const [showOverlays, setShowOverlays] = useState(true);
   const [showZones, setShowZones] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [activeInspectedCam, setActiveInspectedCam] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [currentTime, setCurrentTime] = useState<string>("");
 
   useEffect(() => {
@@ -51,21 +49,41 @@ export default function LiveFeedsPage() {
     selectedCam === "all" ? cameras : cameras.filter((c) => c.id === selectedCam);
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-[#E6E8EC] dashboard-theme selection:bg-[#7342E2] selection:text-white">
-      {/* ══ Cylinder Glassmorphism Navbar (Dark Variant) ═══════════════ */}
-      <div className="pt-3 pb-2">
+    <div className="relative min-h-screen w-full bg-[#07090E] text-[#E6E8EC] overflow-x-hidden selection:bg-[#7342E2] selection:text-white">
+      {/* ══ Ambient Glowing Glass Backdrops ════════════════════════════ */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/15 blur-[140px]" />
+        <div className="absolute top-1/3 -right-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/12 blur-[150px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[650px] rounded-full bg-[#3DD68C]/10 blur-[160px]" />
+        {/* Subtle video background overlay */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-screen"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      {/* ══ Floating Cylinder Glass Navbar ════════════════════════════ */}
+      <div className="relative z-20 pt-3 pb-2">
         <Navbar variant="glass-dark" />
       </div>
 
-      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
+      <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
         {/* ══ Top Toolbar & Control Bar ═════════════════════════════════ */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 rounded-2xl bg-[#12151C] border border-[#232733] shadow-lg">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)]">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-xl font-bold font-heading text-[#E6E8EC]">
+              <h1 className="text-xl font-bold font-heading text-white">
                 Nagpur CCTV Live Video Matrix
               </h1>
-              <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 backdrop-blur-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 4/4 CAMERAS ONLINE
               </span>
@@ -78,12 +96,12 @@ export default function LiveFeedsPage() {
           {/* Controls */}
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Camera Filter Pill */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-[#181C25] border border-[#232733]">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10">
               <button
                 onClick={() => setSelectedCam("all")}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   selectedCam === "all"
-                    ? "bg-[#7342E2] text-white shadow-sm"
+                    ? "bg-[#7342E2] text-white shadow-[0_2px_12px_rgba(115,66,226,0.4)]"
                     : "text-[#8B93A3] hover:text-white"
                 }`}
               >
@@ -95,7 +113,7 @@ export default function LiveFeedsPage() {
                   onClick={() => setSelectedCam(cam.id)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     selectedCam === cam.id
-                      ? "bg-[#7342E2] text-white shadow-sm"
+                      ? "bg-[#7342E2] text-white shadow-[0_2px_12px_rgba(115,66,226,0.4)]"
                       : "text-[#8B93A3] hover:text-white"
                   }`}
                 >
@@ -107,22 +125,22 @@ export default function LiveFeedsPage() {
             {/* AI Toggle Pills */}
             <button
               onClick={() => setShowOverlays(!showOverlays)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border backdrop-blur-xl transition-all ${
                 showOverlays
-                  ? "bg-[#7342E2]/15 text-[#7342E2] border-[#7342E2]/40"
-                  : "bg-[#181C25] text-[#8B93A3] border-[#232733] hover:text-white"
+                  ? "bg-[#7342E2]/20 text-[#c2a4ff] border-[#7342E2]/50 shadow-[0_2px_14px_rgba(115,66,226,0.25)]"
+                  : "bg-white/[0.04] text-[#8B93A3] border-white/10 hover:text-white"
               }`}
             >
               <Sparkles size={13} />
-              <span>AI Bounding Boxes: {showOverlays ? "ON" : "OFF"}</span>
+              <span>AI Boxes: {showOverlays ? "ON" : "OFF"}</span>
             </button>
 
             <button
               onClick={() => setShowZones(!showZones)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border backdrop-blur-xl transition-all ${
                 showZones
-                  ? "bg-blue-500/15 text-blue-400 border-blue-500/40"
-                  : "bg-[#181C25] text-[#8B93A3] border-[#232733] hover:text-white"
+                  ? "bg-blue-500/20 text-blue-300 border-blue-500/50 shadow-[0_2px_14px_rgba(0,132,255,0.25)]"
+                  : "bg-white/[0.04] text-[#8B93A3] border-white/10 hover:text-white"
               }`}
             >
               <Layers size={13} />
@@ -130,14 +148,14 @@ export default function LiveFeedsPage() {
             </button>
 
             {/* Grid Layout Selector */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-[#181C25] border border-[#232733]">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10">
               {(["2x2", "single"] as const).map((mode) => (
                 <button
                   key={mode}
                   onClick={() => setGridMode(mode)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-mono-data uppercase transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-mono-data uppercase transition-all ${
                     gridMode === mode
-                      ? "bg-white/15 text-white"
+                      ? "bg-white/20 text-white shadow-sm"
                       : "text-[#8B93A3] hover:text-white"
                   }`}
                 >
@@ -154,7 +172,7 @@ export default function LiveFeedsPage() {
             gridMode === "single" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
           }`}
         >
-          {displayedCameras.map((camera, index) => {
+          {displayedCameras.map((camera) => {
             return (
               <motion.div
                 key={camera.id}
@@ -162,10 +180,10 @@ export default function LiveFeedsPage() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="group relative rounded-2xl overflow-hidden bg-[#12151C] border border-[#232733] hover:border-[#7342E2]/60 hover:shadow-[0_0_24px_rgba(115,66,226,0.15)] transition-all duration-300 flex flex-col justify-between"
+                className="group relative rounded-3xl overflow-hidden bg-white/[0.03] backdrop-blur-2xl border border-white/10 hover:border-[#7342E2]/60 hover:shadow-[0_8px_32px_rgba(115,66,226,0.2),inset_0_1px_2px_rgba(255,255,255,0.15)] transition-all duration-300 flex flex-col justify-between"
               >
                 {/* Header Bar */}
-                <div className="flex items-center justify-between px-4 py-3 bg-[#181C25]/90 border-b border-[#232733]">
+                <div className="flex items-center justify-between px-5 py-3.5 bg-white/[0.02] border-b border-white/[0.08]">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <div>
@@ -179,12 +197,12 @@ export default function LiveFeedsPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm">
                       LIVE · {camera.fps} FPS
                     </span>
                     <button
                       onClick={() => setActiveInspectedCam(camera.id)}
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#8B93A3] hover:text-white transition-colors cursor-pointer"
+                      className="p-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#8B93A3] hover:text-white transition-colors cursor-pointer"
                       title="Inspect camera feed"
                     >
                       <Maximize2 size={13} />
@@ -193,7 +211,7 @@ export default function LiveFeedsPage() {
                 </div>
 
                 {/* Video / SVG Canvas Area */}
-                <div className="relative aspect-video bg-[#07090E] overflow-hidden flex items-center justify-center">
+                <div className="relative aspect-video bg-[#05070B]/90 overflow-hidden flex items-center justify-center">
                   <svg
                     viewBox="0 0 640 360"
                     className="w-full h-full object-cover"
@@ -210,13 +228,13 @@ export default function LiveFeedsPage() {
                         <path
                           d="M 30 0 L 0 0 0 30"
                           fill="none"
-                          stroke="rgba(255,255,255,0.025)"
+                          stroke="rgba(255,255,255,0.03)"
                           strokeWidth="1"
                         />
                       </pattern>
                       <linearGradient id={`poly-grad-${camera.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#7342E2" stopOpacity="0.15" />
-                        <stop offset="100%" stopColor="#0084FF" stopOpacity="0.05" />
+                        <stop offset="0%" stopColor="#7342E2" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#0084FF" stopOpacity="0.08" />
                       </linearGradient>
                     </defs>
                     <rect width="640" height="360" fill={`url(#grid-pat-${camera.id})`} />
@@ -224,9 +242,9 @@ export default function LiveFeedsPage() {
                     {/* Road perspectives simulation */}
                     <path
                       d="M 0 360 L 260 140 L 380 140 L 640 360 Z"
-                      fill="rgba(255,255,255,0.015)"
+                      fill="rgba(255,255,255,0.02)"
                     />
-                    <line x1="320" y1="140" x2="320" y2="360" stroke="rgba(255,255,255,0.06)" strokeDasharray="10 8" />
+                    <line x1="320" y1="140" x2="320" y2="360" stroke="rgba(255,255,255,0.08)" strokeDasharray="10 8" />
 
                     {/* Zone Overlay */}
                     {showZones && (
@@ -235,13 +253,13 @@ export default function LiveFeedsPage() {
                           points="70,110 240,90 260,270 50,290"
                           fill={`url(#poly-grad-${camera.id})`}
                           stroke="#7342E2"
-                          strokeWidth="1.5"
+                          strokeWidth="1.8"
                           strokeDasharray="6 4"
                         />
                         <text
                           x="95"
                           y="190"
-                          fill="#7342E2"
+                          fill="#c2a4ff"
                           fontSize="10"
                           fontFamily="monospace"
                           fontWeight="bold"
@@ -306,27 +324,27 @@ export default function LiveFeedsPage() {
                     )}
 
                     {/* Telemetry OSD */}
-                    <text x="14" y="24" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="monospace">
+                    <text x="14" y="24" fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="monospace">
                       NAGPUR_CCTV_EDGE_NODE // {camera.name.toUpperCase()}
                     </text>
-                    <text x="14" y="348" fill="rgba(255,255,255,0.3)" fontSize="10" fontFamily="monospace">
+                    <text x="14" y="348" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="monospace">
                       REC ● {currentTime || "12:00:00"} IST · H.264 @ 4096 Kbps
                     </text>
                   </svg>
 
-                  {/* Corner Accent Overlays */}
+                  {/* Corner Glass OSD Badges */}
                   <div className="absolute top-3 right-3 flex items-center gap-1.5 pointer-events-none">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-data bg-black/60 backdrop-blur-md text-[#8B93A3] border border-white/10">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-data bg-black/40 backdrop-blur-xl text-white/90 border border-white/10">
                       Inference: 38ms
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-data bg-black/60 backdrop-blur-md text-[#8B93A3] border border-white/10">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-data bg-black/40 backdrop-blur-xl text-white/90 border border-white/10">
                       1080p
                     </span>
                   </div>
                 </div>
 
                 {/* Footer Controls & Stats */}
-                <div className="px-4 py-2.5 bg-[#181C25]/60 border-t border-[#232733] flex items-center justify-between text-xs">
+                <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.08] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-4 text-[#8B93A3] text-[11px] font-mono-data">
                     <span>Vehicles: <strong className="text-white">18</strong></span>
                     <span>Pedestrians: <strong className="text-white">6</strong></span>
@@ -336,13 +354,13 @@ export default function LiveFeedsPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => alert(`Captured snapshot frame from ${camera.name}`)}
-                      className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[11px] font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-white text-[11px] font-medium border border-white/10 transition-colors cursor-pointer"
                     >
                       Snapshot
                     </button>
                     <button
                       onClick={() => alert(`Triggered manual alert for ${camera.name}`)}
-                      className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[11px] font-medium border border-red-500/20 transition-colors cursor-pointer"
+                      className="px-3 py-1 rounded-full bg-red-500/15 hover:bg-red-500/25 text-red-300 text-[11px] font-medium border border-red-500/30 transition-colors cursor-pointer"
                     >
                       Flag Incident
                     </button>
@@ -361,17 +379,17 @@ export default function LiveFeedsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl"
             onClick={() => setActiveInspectedCam(null)}
           >
             <motion.div
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="w-full max-w-5xl rounded-2xl bg-[#12151C] border border-[#232733] overflow-hidden shadow-2xl"
+              className="w-full max-w-5xl rounded-3xl bg-[#12151C]/90 backdrop-blur-3xl border border-white/15 overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#232733]">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                   <h2 className="text-base font-bold text-white">
@@ -380,33 +398,33 @@ export default function LiveFeedsPage() {
                 </div>
                 <button
                   onClick={() => setActiveInspectedCam(null)}
-                  className="p-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
                 >
                   <Minimize2 size={16} />
                 </button>
               </div>
 
               <div className="p-6">
-                <div className="aspect-video bg-[#07090E] rounded-xl overflow-hidden border border-[#232733] flex items-center justify-center relative">
+                <div className="aspect-video bg-[#05070B] rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center relative">
                   <p className="text-sm font-mono-data text-[#8B93A3]">
                     Live 60 FPS Ultra-HD Stream Pipeline Active
                   </p>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                  <div className="p-3 rounded-xl bg-[#181C25] border border-[#232733]">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10">
                     <span className="text-[10px] text-[#8B93A3] block uppercase">Resolution</span>
                     <span className="text-sm font-bold font-mono-data text-white">1920 × 1080 @ 30fps</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#181C25] border border-[#232733]">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10">
                     <span className="text-[10px] text-[#8B93A3] block uppercase">Model Pipeline</span>
-                    <span className="text-sm font-bold font-mono-data text-[#7342E2]">YOLOv8n + ByteTrack</span>
+                    <span className="text-sm font-bold font-mono-data text-[#c2a4ff]">YOLOv8n + ByteTrack</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#181C25] border border-[#232733]">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10">
                     <span className="text-[10px] text-[#8B93A3] block uppercase">Network Latency</span>
                     <span className="text-sm font-bold font-mono-data text-[#3DD68C]">24ms</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#181C25] border border-[#232733]">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10">
                     <span className="text-[10px] text-[#8B93A3] block uppercase">Encoding</span>
                     <span className="text-sm font-bold font-mono-data text-white">H.265 / HEVC</span>
                   </div>

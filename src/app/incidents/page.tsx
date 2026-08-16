@@ -55,16 +55,36 @@ export default function IncidentsPage() {
   const resolvedCount = alerts.filter((a) => a.status === "resolved").length;
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-[#E6E8EC] dashboard-theme selection:bg-[#7342E2] selection:text-white">
+    <div className="relative min-h-screen w-full bg-[#07090E] text-[#E6E8EC] overflow-x-hidden selection:bg-[#7342E2] selection:text-white">
+      {/* ══ Ambient Glowing Glass Backdrops ════════════════════════════ */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 right-1/4 w-[600px] h-[600px] rounded-full bg-[#7342E2]/15 blur-[140px]" />
+        <div className="absolute top-1/3 -left-40 w-[550px] h-[550px] rounded-full bg-[#FF4D4F]/10 blur-[150px]" />
+        <div className="absolute -bottom-40 right-1/3 w-[650px] h-[650px] rounded-full bg-[#0084FF]/10 blur-[160px]" />
+        {/* Subtle video background overlay */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-screen"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
       {/* ══ Top Cylinder Glassmorphism Navbar ══════════════════════════ */}
-      <div className="pt-3 pb-2">
+      <div className="relative z-20 pt-3 pb-2">
         <Navbar variant="glass-dark" />
       </div>
 
-      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
+      <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-5">
         {/* ══ Header & Quick Stats Row ═══════════════════════════════════ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl bg-[#12151C] border border-[#232733] flex items-center justify-between">
+          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
             <div>
               <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
                 Critical / New Alerts
@@ -73,18 +93,18 @@ export default function IncidentsPage() {
                 <span className="text-2xl font-bold font-mono-data text-[#FF4D4F]">
                   {newCount}
                 </span>
-                <span className="text-[11px] text-[#FF4D4F]/80 flex items-center gap-1">
+                <span className="text-[11px] text-[#FF4D4F]/90 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D4F] animate-pulse" />
                   Requires Triage
                 </span>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-[#FF4D4F] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-red-500/15 text-[#FF4D4F] border border-red-500/20 flex items-center justify-center">
               <AlertTriangle size={20} />
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#12151C] border border-[#232733] flex items-center justify-between">
+          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
             <div>
               <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
                 In-Progress / Ack&apos;d
@@ -96,12 +116,12 @@ export default function IncidentsPage() {
                 <span className="text-[11px] text-[#8B93A3]">Patrol Dispatched</span>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-[#F5A623] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-[#F5A623] border border-amber-500/20 flex items-center justify-center">
               <Clock size={20} />
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#12151C] border border-[#232733] flex items-center justify-between">
+          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
             <div>
               <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
                 Resolved Today
@@ -110,15 +130,15 @@ export default function IncidentsPage() {
                 <span className="text-2xl font-bold font-mono-data text-[#3DD68C]">
                   {resolvedCount}
                 </span>
-                <span className="text-[11px] text-emerald-400/80">98.4% Resolution</span>
+                <span className="text-[11px] text-emerald-400">98.4% Resolution</span>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-[#3DD68C] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-[#3DD68C] border border-emerald-500/20 flex items-center justify-center">
               <Check size={20} />
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#12151C] border border-[#232733] flex items-center justify-between">
+          <div className="p-5 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-between">
             <div>
               <span className="text-xs font-medium text-[#8B93A3] block uppercase tracking-wider">
                 Mean Dispatch Time
@@ -127,40 +147,40 @@ export default function IncidentsPage() {
                 <span className="text-2xl font-bold font-mono-data text-[#0084FF]">
                   1.4 min
                 </span>
-                <span className="text-[11px] text-blue-400/80">-18s vs SLA</span>
+                <span className="text-[11px] text-blue-400">-18s vs SLA</span>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-[#0084FF] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-2xl bg-blue-500/15 text-[#0084FF] border border-blue-500/20 flex items-center justify-center">
               <Zap size={20} />
             </div>
           </div>
         </div>
 
         {/* ══ Filter & Search Bar ════════════════════════════════════════ */}
-        <div className="p-4 rounded-2xl bg-[#12151C] border border-[#232733] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="p-4 rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8B93A3]" />
+            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8B93A3]" />
             <input
               type="text"
               placeholder="Search by Alert ID, Junction name, or event type..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#181C25] border border-[#232733] text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2]"
+              className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white/[0.04] border border-white/10 text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2] focus:bg-white/[0.07] transition-all"
             />
           </div>
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Status Selector */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-[#181C25] border border-[#232733]">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.04] backdrop-blur-xl border border-white/10">
               {(["all", "new", "acknowledged", "resolved"] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium capitalize transition-all ${
                     statusFilter === st
-                      ? "bg-[#7342E2] text-white shadow-sm"
+                      ? "bg-[#7342E2] text-white shadow-[0_2px_12px_rgba(115,66,226,0.4)]"
                       : "text-[#8B93A3] hover:text-white"
                   }`}
                 >
@@ -173,13 +193,13 @@ export default function IncidentsPage() {
             <select
               value={eventTypeFilter}
               onChange={(e) => setEventTypeFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#181C25] border border-[#232733] text-white outline-none cursor-pointer"
+              className="px-4 py-2 rounded-full text-xs font-medium bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white outline-none cursor-pointer"
             >
-              <option value="all">All Incident Types</option>
-              <option value="illegal_parking">Illegal Parking</option>
-              <option value="wrong_way">Wrong-Way Movement</option>
-              <option value="loitering">Loitering Detected</option>
-              <option value="crowd_density">Crowd Density Surge</option>
+              <option value="all" className="bg-[#12151C]">All Incident Types</option>
+              <option value="illegal_parking" className="bg-[#12151C]">Illegal Parking</option>
+              <option value="wrong_way" className="bg-[#12151C]">Wrong-Way Movement</option>
+              <option value="loitering" className="bg-[#12151C]">Loitering Detected</option>
+              <option value="crowd_density" className="bg-[#12151C]">Crowd Density Surge</option>
             </select>
           </div>
         </div>
@@ -207,11 +227,11 @@ export default function IncidentsPage() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="rounded-2xl bg-[#12151C] border border-[#232733] overflow-hidden hover:border-[#7342E2]/60 hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
+                  className="rounded-3xl bg-white/[0.03] backdrop-blur-2xl border border-white/10 overflow-hidden hover:border-[#7342E2]/60 hover:shadow-[0_8px_32px_rgba(115,66,226,0.18)] transition-all duration-200 flex flex-col justify-between"
                   style={{ borderLeft: `4px solid ${borderColor}` }}
                 >
                   {/* Top Details */}
-                  <div className="p-4 space-y-3">
+                  <div className="p-5 space-y-3.5">
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <span className="text-[10px] font-mono-data text-[#8B93A3] block">
@@ -222,9 +242,10 @@ export default function IncidentsPage() {
                         </h3>
                       </div>
                       <span
-                        className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider"
+                        className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border"
                         style={{
                           backgroundColor: `${borderColor}15`,
+                          borderColor: `${borderColor}30`,
                           color: borderColor,
                         }}
                       >
@@ -233,8 +254,8 @@ export default function IncidentsPage() {
                     </div>
 
                     {/* Snapshot & Camera Info */}
-                    <div className="flex gap-3">
-                      <div className="w-24 h-16 rounded-lg bg-[#181C25] overflow-hidden flex-shrink-0 border border-[#232733]">
+                    <div className="flex gap-3.5">
+                      <div className="w-24 h-16 rounded-xl bg-[#05070B] overflow-hidden flex-shrink-0 border border-white/10">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={alert.snapshotUrl}
@@ -251,10 +272,10 @@ export default function IncidentsPage() {
                           Detected: {new Date(alert.detectedAt).toLocaleTimeString("en-IN")}
                         </div>
                         <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-[10px] font-mono-data px-1.5 py-0.2 rounded bg-[#7342E2]/15 text-[#7342E2]">
+                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-[#7342E2]/15 text-[#c2a4ff] border border-[#7342E2]/25">
                             Conf: {Math.round(alert.confidence * 100)}%
                           </span>
-                          <span className="text-[10px] font-mono-data px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400">
+                          <span className="text-[10px] font-mono-data px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             Latency: {(alert.latencyMs / 1000).toFixed(1)}s
                           </span>
                         </div>
@@ -263,10 +284,10 @@ export default function IncidentsPage() {
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="px-4 py-3 bg-[#181C25]/80 border-t border-[#232733] flex items-center justify-between gap-2">
+                  <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.08] flex items-center justify-between gap-2">
                     <button
                       onClick={() => setSelectedIncident(alert)}
-                      className="text-xs font-semibold text-[#7342E2] hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-xs font-semibold text-[#c2a4ff] hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       <span>Full Audit Log</span>
                       <ChevronRight size={13} />
@@ -277,13 +298,13 @@ export default function IncidentsPage() {
                         <>
                           <button
                             onClick={() => updateAlertStatus(alert.id, "acknowledged", "Officer On-Duty")}
-                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-[#F5A623] border border-amber-500/30 transition-colors cursor-pointer"
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-[#F5A623] border border-amber-500/40 shadow-sm transition-colors cursor-pointer"
                           >
                             Ack &amp; Dispatch
                           </button>
                           <button
                             onClick={() => updateAlertStatus(alert.id, "false_positive")}
-                            className="p-1.5 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 text-[#8B93A3] hover:text-white transition-colors cursor-pointer"
+                            className="p-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#8B93A3] hover:text-white border border-white/10 transition-colors cursor-pointer"
                             title="False Positive"
                           >
                             <X size={13} />
@@ -293,7 +314,7 @@ export default function IncidentsPage() {
                       {alert.status === "acknowledged" && (
                         <button
                           onClick={() => updateAlertStatus(alert.id, "resolved", "Officer On-Duty")}
-                          className="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-[#3DD68C] border border-emerald-500/30 transition-colors cursor-pointer flex items-center gap-1"
+                          className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-[#3DD68C] border border-emerald-500/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <Check size={12} />
                           Resolve
@@ -320,7 +341,7 @@ export default function IncidentsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md"
             onClick={() => setSelectedIncident(null)}
           >
             <motion.div
@@ -328,10 +349,10 @@ export default function IncidentsPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 26, stiffness: 300 }}
-              className="w-full max-w-lg h-full bg-[#12151C] border-l border-[#232733] p-6 overflow-y-auto space-y-6"
+              className="w-full max-w-lg h-full bg-[#12151C]/90 backdrop-blur-3xl border-l border-white/15 p-6 overflow-y-auto space-y-6 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-4 border-b border-[#232733]">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
                 <div>
                   <span className="text-xs font-mono-data text-[#8B93A3] block">
                     INCIDENT CASE // {selectedIncident.id}
@@ -342,14 +363,14 @@ export default function IncidentsPage() {
                 </div>
                 <button
                   onClick={() => setSelectedIncident(null)}
-                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Snapshot Display */}
-              <div className="rounded-xl overflow-hidden border border-[#232733] bg-[#07090E]">
+              <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#05070B]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedIncident.snapshotUrl}
@@ -359,24 +380,24 @@ export default function IncidentsPage() {
               </div>
 
               {/* Metadata Table */}
-              <div className="rounded-xl bg-[#181C25] border border-[#232733] divide-y divide-[#232733] text-xs">
-                <div className="flex justify-between px-4 py-2.5">
+              <div className="rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 divide-y divide-white/10 text-xs">
+                <div className="flex justify-between px-4 py-3">
                   <span className="text-[#8B93A3]">Camera Junction</span>
                   <span className="font-semibold text-white">{selectedIncident.cameraName}</span>
                 </div>
-                <div className="flex justify-between px-4 py-2.5">
+                <div className="flex justify-between px-4 py-3">
                   <span className="text-[#8B93A3]">AI Confidence Score</span>
-                  <span className="font-mono-data font-bold text-[#7342E2]">
+                  <span className="font-mono-data font-bold text-[#c2a4ff]">
                     {Math.round(selectedIncident.confidence * 100)}% Match
                   </span>
                 </div>
-                <div className="flex justify-between px-4 py-2.5">
+                <div className="flex justify-between px-4 py-3">
                   <span className="text-[#8B93A3]">Detection Timestamp</span>
                   <span className="font-mono-data text-white">
                     {new Date(selectedIncident.detectedAt).toLocaleString("en-IN")}
                   </span>
                 </div>
-                <div className="flex justify-between px-4 py-2.5">
+                <div className="flex justify-between px-4 py-3">
                   <span className="text-[#8B93A3]">Pipeline Latency</span>
                   <span className="font-mono-data text-[#3DD68C]">
                     {(selectedIncident.latencyMs / 1000).toFixed(2)}s (Sub-SLA)
@@ -397,19 +418,19 @@ export default function IncidentsPage() {
                   onBlur={() => {
                     if (noteText) addNote(selectedIncident.id, noteText);
                   }}
-                  className="w-full p-3 rounded-xl bg-[#181C25] border border-[#232733] text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2] resize-none"
+                  className="w-full p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-[#5A6172] focus:outline-none focus:border-[#7342E2] focus:bg-white/[0.07] resize-none"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-2.5 pt-2">
                 {selectedIncident.status === "new" && (
                   <button
                     onClick={() => {
                       updateAlertStatus(selectedIncident.id, "acknowledged", "Duty Officer");
                       setSelectedIncident(null);
                     }}
-                    className="flex-1 py-3 rounded-xl text-xs font-semibold bg-[#F5A623] hover:bg-[#e09315] text-[#0B0E14] shadow-md transition-all cursor-pointer"
+                    className="flex-1 py-3.5 rounded-full text-xs font-semibold bg-[#F5A623] hover:bg-[#e09315] text-[#0B0E14] shadow-lg transition-all cursor-pointer"
                   >
                     Acknowledge &amp; Dispatch Patrol
                   </button>
@@ -420,7 +441,7 @@ export default function IncidentsPage() {
                       updateAlertStatus(selectedIncident.id, "resolved", "Duty Officer");
                       setSelectedIncident(null);
                     }}
-                    className="flex-1 py-3 rounded-xl text-xs font-semibold bg-[#3DD68C] hover:bg-[#32be7a] text-[#0B0E14] shadow-md transition-all cursor-pointer"
+                    className="flex-1 py-3.5 rounded-full text-xs font-semibold bg-[#3DD68C] hover:bg-[#32be7a] text-[#0B0E14] shadow-lg transition-all cursor-pointer"
                   >
                     Mark Resolved
                   </button>

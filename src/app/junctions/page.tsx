@@ -7,17 +7,12 @@ import { Camera } from "@/lib/types";
 import {
   MapPin,
   Camera as CameraIcon,
-  Sliders,
   Plus,
   Radio,
   CheckCircle,
   AlertCircle,
   ExternalLink,
   Layers,
-  Settings2,
-  Cpu,
-  Eye,
-  Activity,
   Edit3,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -92,22 +87,41 @@ export default function JunctionsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-[#E6E8EC] dashboard-theme selection:bg-[#7342E2] selection:text-white">
+    <div className="relative min-h-screen w-full bg-[#07090E] text-[#E6E8EC] overflow-x-hidden selection:bg-[#7342E2] selection:text-white">
+      {/* ══ Ambient Glowing Glass Backdrops ════════════════════════════ */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 left-1/3 w-[600px] h-[600px] rounded-full bg-[#7342E2]/15 blur-[140px]" />
+        <div className="absolute top-1/2 -left-40 w-[550px] h-[550px] rounded-full bg-[#0084FF]/12 blur-[150px]" />
+        <div className="absolute -bottom-40 right-1/4 w-[650px] h-[650px] rounded-full bg-[#3DD68C]/10 blur-[160px]" />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-screen"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
       {/* ══ Cylinder Glassmorphism Navbar ══════════════════════════════ */}
-      <div className="pt-3 pb-2">
+      <div className="relative z-20 pt-3 pb-2">
         <Navbar variant="glass-dark" />
       </div>
 
-      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-6">
+      <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 py-4 space-y-6">
         {/* ══ Header Toolbar ════════════════════════════════════════════ */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#12151C] border border-[#232733]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)]">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold font-heading text-white">
                 Nagpur CCTV Junctions &amp; Node Infrastructure
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                4 Active Junctions Configured
+              <span className="px-3 py-0.5 rounded-full text-xs font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 backdrop-blur-md">
+                4 Active Nodes
               </span>
             </div>
             <p className="text-xs text-[#8B93A3] mt-0.5">
@@ -120,7 +134,7 @@ export default function JunctionsPage() {
             className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-[#7342E2] hover:bg-[#6434d3] text-white shadow-md transition-all cursor-pointer"
           >
             <Plus size={14} />
-            <span>Add New Junction Node</span>
+            <span>Add New Node</span>
           </button>
         </div>
 
@@ -139,14 +153,14 @@ export default function JunctionsPage() {
                   <div
                     key={j.id}
                     onClick={() => setSelectedJunction(j)}
-                    className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                    className={`p-5 rounded-3xl border transition-all duration-200 cursor-pointer backdrop-blur-2xl ${
                       isSelected
-                        ? "bg-[#181C25] border-[#7342E2] shadow-[0_0_20px_rgba(115,66,226,0.18)]"
-                        : "bg-[#12151C] border-[#232733] hover:border-[#7342E2]/40 hover:bg-[#181C25]/50"
+                        ? "bg-white/[0.08] border-[#7342E2] shadow-[0_8px_32px_rgba(115,66,226,0.25),inset_0_1px_2px_rgba(255,255,255,0.2)]"
+                        : "bg-white/[0.03] border-white/10 hover:border-[#7342E2]/40 hover:bg-white/[0.05]"
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <div
                           className={`w-3 h-3 rounded-full ${
                             j.status === "online" ? "bg-emerald-400" : "bg-red-400"
@@ -159,14 +173,14 @@ export default function JunctionsPage() {
                           </span>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono-data bg-emerald-500/10 text-emerald-400">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-data bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                         {j.fps} FPS
                       </span>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-[#232733] flex items-center justify-between text-xs text-[#8B93A3]">
+                    <div className="mt-3.5 pt-3 border-t border-white/[0.08] flex items-center justify-between text-xs text-[#8B93A3]">
                       <span>{j.totalLanes} Lanes</span>
-                      <span className="font-mono-data text-white">{j.dailyTrafficEstimate}</span>
+                      <span className="font-mono-data text-white font-medium">{j.dailyTrafficEstimate}</span>
                     </div>
                   </div>
                 );
@@ -176,11 +190,11 @@ export default function JunctionsPage() {
 
           {/* Right Column: Node Detailed Telemetry & Zone Calibration (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="p-6 rounded-2xl bg-[#12151C] border border-[#232733] space-y-6">
+            <div className="p-6 rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] space-y-6">
               {/* Header with Coordinates */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-[#232733] gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-white/10 gap-2">
                 <div>
-                  <span className="text-xs font-mono-data text-[#7342E2] block">
+                  <span className="text-xs font-mono-data text-[#c2a4ff] block">
                     ACTIVE NODE CALIBRATION
                   </span>
                   <h2 className="text-lg font-bold text-white mt-0.5">
@@ -190,10 +204,10 @@ export default function JunctionsPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsEditingZone(!isEditingZone)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border backdrop-blur-xl transition-all cursor-pointer ${
                       isEditingZone
-                        ? "bg-[#7342E2] text-white border-[#7342E2]"
-                        : "bg-[#181C25] text-white border-[#232733] hover:bg-[#232733]"
+                        ? "bg-[#7342E2] text-white border-[#7342E2] shadow-[0_2px_14px_rgba(115,66,226,0.4)]"
+                        : "bg-white/[0.06] text-white border-white/15 hover:bg-white/[0.12]"
                     }`}
                   >
                     <Edit3 size={13} />
@@ -203,7 +217,7 @@ export default function JunctionsPage() {
               </div>
 
               {/* Interactive SVG Zone Calibration Frame */}
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-[#07090E] border border-[#232733]">
+              <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#05070B]/90 border border-white/10">
                 <svg viewBox="0 0 640 360" className="w-full h-full object-cover">
                   {/* Grid */}
                   <defs>
@@ -216,7 +230,7 @@ export default function JunctionsPage() {
                   {/* Junction Geometry */}
                   <polygon
                     points="80,100 280,80 320,290 60,310"
-                    fill="rgba(115,66,226,0.15)"
+                    fill="rgba(115,66,226,0.2)"
                     stroke="#7342E2"
                     strokeWidth={isEditingZone ? "3" : "2"}
                     strokeDasharray={isEditingZone ? "4 4" : "none"}
@@ -230,10 +244,10 @@ export default function JunctionsPage() {
                     </g>
                   )}
 
-                  <text x="110" y="200" fill="#7342E2" fontSize="12" fontFamily="monospace" fontWeight="bold">
+                  <text x="110" y="200" fill="#c2a4ff" fontSize="12" fontFamily="monospace" fontWeight="bold">
                     ZONE: {selectedJunction.activeZone.toUpperCase()}
                   </text>
-                  <text x="14" y="24" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="monospace">
+                  <text x="14" y="24" fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="monospace">
                     CALIBRATION HUD // {selectedJunction.id} ({selectedJunction.location.lat.toFixed(4)}, {selectedJunction.location.lng.toFixed(4)})
                   </text>
                 </svg>
@@ -247,24 +261,24 @@ export default function JunctionsPage() {
 
               {/* Hardware & Stream Telemetry Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-[#181C25] border border-[#232733] space-y-1">
+                <div className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 space-y-1">
                   <span className="text-[#8B93A3] text-[11px] block uppercase">Camera Hardware</span>
                   <span className="font-semibold text-white block">{selectedJunction.hardwareModel}</span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#181C25] border border-[#232733] space-y-1">
+                <div className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 space-y-1">
                   <span className="text-[#8B93A3] text-[11px] block uppercase">Lens Coverage</span>
                   <span className="font-semibold text-white block">{selectedJunction.coverageAngle}</span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#181C25] border border-[#232733] space-y-1">
+                <div className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 space-y-1">
                   <span className="text-[#8B93A3] text-[11px] block uppercase">RTSP Feed Endpoint</span>
-                  <span className="font-mono-data text-[#7342E2] block truncate">
+                  <span className="font-mono-data text-[#c2a4ff] block truncate">
                     rtsp://admin:pass@{selectedJunction.ipAddress}:554/live/ch0
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#181C25] border border-[#232733] space-y-1">
+                <div className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 space-y-1">
                   <span className="text-[#8B93A3] text-[11px] block uppercase">Traffic Capacity</span>
                   <span className="font-semibold text-emerald-400 block">{selectedJunction.dailyTrafficEstimate}</span>
                 </div>
@@ -281,14 +295,14 @@ export default function JunctionsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="w-full max-w-md rounded-2xl bg-[#12151C] border border-[#232733] p-6 space-y-4 shadow-2xl"
+              className="w-full max-w-md rounded-3xl bg-[#12151C]/90 backdrop-blur-3xl border border-white/15 p-6 space-y-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-base font-bold text-white">Add New Nagpur CCTV Node</h2>
@@ -302,7 +316,7 @@ export default function JunctionsPage() {
                   <input
                     type="text"
                     placeholder="e.g. Mankapur Ring Road Junction"
-                    className="w-full p-2.5 rounded-xl bg-[#181C25] border border-[#232733] text-white focus:outline-none focus:border-[#7342E2]"
+                    className="w-full p-3 rounded-2xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-[#7342E2]"
                   />
                 </div>
                 <div>
@@ -310,24 +324,24 @@ export default function JunctionsPage() {
                   <input
                     type="text"
                     placeholder="192.168.10.105"
-                    className="w-full p-2.5 rounded-xl bg-[#181C25] border border-[#232733] text-white focus:outline-none focus:border-[#7342E2]"
+                    className="w-full p-3 rounded-2xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-[#7342E2]"
                   />
                 </div>
                 <div>
                   <label className="text-[#8B93A3] block mb-1">AI Detection Zone Type</label>
-                  <select className="w-full p-2.5 rounded-xl bg-[#181C25] border border-[#232733] text-white focus:outline-none focus:border-[#7342E2]">
-                    <option>No Parking &amp; Tow Zone</option>
-                    <option>Speed Enforcement (60 km/h)</option>
-                    <option>Wrong Way Corridor</option>
-                    <option>Crowd Density &amp; Perimeter</option>
+                  <select className="w-full p-3 rounded-2xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-[#7342E2]">
+                    <option className="bg-[#12151C]">No Parking &amp; Tow Zone</option>
+                    <option className="bg-[#12151C]">Speed Enforcement (60 km/h)</option>
+                    <option className="bg-[#12151C]">Wrong Way Corridor</option>
+                    <option className="bg-[#12151C]">Crowd Density &amp; Perimeter</option>
                   </select>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-3">
+              <div className="flex gap-2.5 pt-3">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-semibold transition-colors cursor-pointer"
+                  className="flex-1 py-3 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-white text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -336,7 +350,7 @@ export default function JunctionsPage() {
                     alert("New camera node registered successfully!");
                     setShowAddModal(false);
                   }}
-                  className="flex-1 py-2.5 rounded-xl bg-[#7342E2] hover:bg-[#6434d3] text-white text-xs font-semibold shadow-md transition-colors cursor-pointer"
+                  className="flex-1 py-3 rounded-full bg-[#7342E2] hover:bg-[#6434d3] text-white text-xs font-semibold shadow-lg transition-colors cursor-pointer"
                 >
                   Register Node
                 </button>
